@@ -32,20 +32,22 @@ GameEngineIndexBufferManager::GameEngineIndexBufferManager(GameEngineIndexBuffer
 
 GameEngineIndexBuffer* GameEngineIndexBufferManager::Create(const std::string& _Name, const std::vector<UINT>& _Index, D3D11_USAGE _Usage)
 {
-	GameEngineIndexBuffer* FindRes = Find(_Name);
+	std::string UpperName = GameEngineString::toupper(_Name);
+
+	GameEngineIndexBuffer* FindRes = Find(UpperName);
 
 	if (nullptr != FindRes)
 	{
-		GameEngineDebug::MsgBoxError(_Name + " Is Overlap Create");
+		GameEngineDebug::MsgBoxError(UpperName + " Is Overlap Create");
 	}
 
 
 	GameEngineIndexBuffer* NewRes = new GameEngineIndexBuffer();
-	NewRes->SetName(_Name);
+	NewRes->SetName(UpperName);
 	NewRes->Create(_Index, _Usage);
 	// 그리고 뭘할거냐?
 
-	ResourcesMap.insert(std::map<std::string, GameEngineIndexBuffer*>::value_type(_Name, NewRes));
+	ResourcesMap.insert(std::map<std::string, GameEngineIndexBuffer*>::value_type(UpperName, NewRes));
 	return NewRes;
 }
 
@@ -56,7 +58,10 @@ GameEngineIndexBuffer* GameEngineIndexBufferManager::Load(const std::string& _Pa
 
 GameEngineIndexBuffer* GameEngineIndexBufferManager::Load(const std::string& _Name, const std::string& _Path)
 {
-	GameEngineIndexBuffer* FindRes = Find(_Name);
+	std::string UpperName = GameEngineString::toupper(_Name);
+
+
+	GameEngineIndexBuffer* FindRes = Find(UpperName);
 
 	if (nullptr != FindRes)
 	{
@@ -64,16 +69,19 @@ GameEngineIndexBuffer* GameEngineIndexBufferManager::Load(const std::string& _Na
 	}
 
 	GameEngineIndexBuffer* NewRes = new GameEngineIndexBuffer();
-	NewRes->SetName(_Name);
+	NewRes->SetName(UpperName);
 
 
-	ResourcesMap.insert(std::map<std::string, GameEngineIndexBuffer*>::value_type(_Name, NewRes));
+	ResourcesMap.insert(std::map<std::string, GameEngineIndexBuffer*>::value_type(UpperName, NewRes));
 	return NewRes;
 }
 
 GameEngineIndexBuffer* GameEngineIndexBufferManager::Find(const std::string& _Name)
 {
-	std::map<std::string, GameEngineIndexBuffer*>::iterator FindIter = ResourcesMap.find(_Name);
+	std::string UpperName = GameEngineString::toupper(_Name);
+
+
+	std::map<std::string, GameEngineIndexBuffer*>::iterator FindIter = ResourcesMap.find(UpperName);
 
 	if (FindIter != ResourcesMap.end())
 	{

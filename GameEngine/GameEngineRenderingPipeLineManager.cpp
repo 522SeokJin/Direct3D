@@ -31,20 +31,23 @@ GameEngineRenderingPipeLineManager::GameEngineRenderingPipeLineManager(GameEngin
 
 GameEngineRenderingPipeLine* GameEngineRenderingPipeLineManager::Create(const std::string& _Name)
 {
-	GameEngineRenderingPipeLine* FindRes = Find(_Name);
+	std::string UpperName = GameEngineString::toupper(_Name);
+
+
+	GameEngineRenderingPipeLine* FindRes = Find(UpperName);
 
 	if (nullptr != FindRes)
 	{
-		GameEngineDebug::MsgBoxError(_Name + " Is Overlap Create");
+		GameEngineDebug::MsgBoxError(UpperName + " Is Overlap Create");
 	}
 
 
 	GameEngineRenderingPipeLine* NewRes = new GameEngineRenderingPipeLine();
-	NewRes->SetName(_Name);
+	NewRes->SetName(UpperName);
 
 	// 그리고 뭘할거냐?
 
-	ResourcesMap.insert(std::map<std::string, GameEngineRenderingPipeLine*>::value_type(_Name, NewRes));
+	ResourcesMap.insert(std::map<std::string, GameEngineRenderingPipeLine*>::value_type(UpperName, NewRes));
 	return NewRes;
 }
 
@@ -55,24 +58,29 @@ GameEngineRenderingPipeLine* GameEngineRenderingPipeLineManager::Load(const std:
 
 GameEngineRenderingPipeLine* GameEngineRenderingPipeLineManager::Load(const std::string& _Name, const std::string& _Path)
 {
-	GameEngineRenderingPipeLine* FindRes = Find(_Name);
+	std::string UpperName = GameEngineString::toupper(_Name);
+
+	GameEngineRenderingPipeLine* FindRes = Find(UpperName);
 
 	if (nullptr != FindRes)
 	{
-		GameEngineDebug::MsgBoxError(_Name + " Is Overlap Load");
+		GameEngineDebug::MsgBoxError(UpperName + " Is Overlap Load");
 	}
 
 	GameEngineRenderingPipeLine* NewRes = new GameEngineRenderingPipeLine();
-	NewRes->SetName(_Name);
+	NewRes->SetName(UpperName);
 
 
-	ResourcesMap.insert(std::map<std::string, GameEngineRenderingPipeLine*>::value_type(_Name, NewRes));
+	ResourcesMap.insert(std::map<std::string, GameEngineRenderingPipeLine*>::value_type(UpperName, NewRes));
 	return NewRes;
 }
 
 GameEngineRenderingPipeLine* GameEngineRenderingPipeLineManager::Find(const std::string& _Name)
 {
-	std::map<std::string, GameEngineRenderingPipeLine*>::iterator FindIter = ResourcesMap.find(_Name);
+
+	std::string UpperName = GameEngineString::toupper(_Name);
+
+	std::map<std::string, GameEngineRenderingPipeLine*>::iterator FindIter = ResourcesMap.find(UpperName);
 
 	if (FindIter != ResourcesMap.end())
 	{

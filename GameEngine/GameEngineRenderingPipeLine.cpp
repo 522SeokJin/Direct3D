@@ -224,6 +224,20 @@ GameEngineRenderingPipeLine* GameEngineRenderingPipeLine::Clone()
 	return NewClone;
 }
 
+void GameEngineRenderingPipeLine::Copy(GameEngineRenderingPipeLine* _Value)
+{
+	VertexBuffer_ = _Value->VertexBuffer_;
+	InputLayOutVertexShader_ = _Value->InputLayOutVertexShader_;
+	VertexShader_ = _Value->VertexShader_;
+	IndexBuffer_ = _Value->IndexBuffer_;
+	Topology_ = _Value->Topology_;
+	Rasterizer_ = _Value->Rasterizer_;
+	PixelShader_ = _Value->PixelShader_;
+	Blend_ = _Value->Blend_;
+	RenderTarget_ = _Value->RenderTarget_;
+	DepthStencil_ = _Value->DepthStencil_;
+}
+
 void GameEngineRenderingPipeLine::RasterizerClone()
 {
 	Rasterizer_ = Rasterizer_->Clone();

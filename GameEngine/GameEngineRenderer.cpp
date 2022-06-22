@@ -15,6 +15,11 @@ GameEngineRenderer::GameEngineRenderer()
 
 GameEngineRenderer::~GameEngineRenderer() 
 {
+	if (nullptr != PipeLine_)
+	{
+		delete PipeLine_;
+		PipeLine_ = nullptr;
+	}
 }
 
 
@@ -29,14 +34,25 @@ void GameEngineRenderer::Render()
 
 void GameEngineRenderer::SetRenderingPipeLine(const std::string& _Value)
 {
+	std::string UpperName = GameEngineString::toupper(_Value);
+
 	ShaderHelper.Clear();
 
-	PipeLine_ = GameEngineRenderingPipeLineManager::GetInst().Find(_Value);
+	GameEngineRenderingPipeLine* FindPipeLine_ = GameEngineRenderingPipeLineManager::GetInst().Find(UpperName);
+
+	if (nullptr == FindPipeLine_)
+	{
+		GameEngineDebug::MsgBoxError("존재하지 않는 랜더링 파이프라인입니다." + UpperName);
+		return;
+	}
 
 	if (nullptr == PipeLine_)
 	{
-		GameEngineDebug::MsgBoxError("존재하지 않는 랜더링 파이프라인입니다." + _Value);
-		return;
+		PipeLine_ = FindPipeLine_->Clone();
+	}
+	else
+	{
+		PipeLine_->Copy(FindPipeLine_);
 	}
 
 	ShaderHelper.ShaderResourcesCheck(PipeLine_->GetPixelShader());
@@ -68,4 +84,21 @@ void GameEngineRenderer::Update(float _DeltaTime)
 void GameEngineRenderer::SetRenderGroup(int _Order)
 {
 	GetLevel()->GetMainCamera()->ChangeRendererGroup(_Order, this);
+}
+
+void GameEngineRenderer::SetMesh(const std::string& _Value)
+{
+	SetMesh(_Value, _Value);
+}
+
+void GameEngineRenderer::SetMesh(const std::string& _Vtx, const std::string& _Idx)
+{
+	if (nullptr == PipeLine_)
+	{
+		GameEngineDebug::MsgBoxError("랜더링 파이프라인을 먼저 세팅해주세요." + _Vtx);
+		return;
+	}
+
+	PipeLine_->SetInputAssembler1VertexBufferSetting(_Vtx);
+	PipeLine_->SetInputAssembler2IndexBufferSetting(_Idx);
 }

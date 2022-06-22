@@ -1,5 +1,6 @@
 #pragma once
 #include "GameEngineTransformComponent.h"
+#include "GameEngineRenderingPipeLine.h"
 #include "GameEngineShaderResHelper.h"
 
 // 설명 : 하나의 랜더 단위를 표현합니다.
@@ -27,12 +28,17 @@ public:
 
 	virtual void SetRenderingPipeLineSettingNext() {}
 
-	GameEngineShaderResHelper ShaderHelper;
 	virtual void SetRenderGroup(int _Order);
 
-protected:
-	GameEngineRenderingPipeLine* PipeLine_;
+	inline GameEngineRenderingPipeLine* GetPipeLine()
+	{
+		return PipeLine_;
+	}
 
+	void SetMesh(const std::string& _Value);
+	void SetMesh(const std::string& _Vtx, const std::string& _Idx);
+
+protected:
 	void Start() override;
 
 	virtual void Render();
@@ -40,6 +46,13 @@ protected:
 private:
 	void Update(float _DeltaTime) override;
 
+public:
+	GameEngineShaderResHelper ShaderHelper;
+
+protected:
+
+private:
+	GameEngineRenderingPipeLine* PipeLine_;
 
 };
 

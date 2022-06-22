@@ -101,70 +101,70 @@ void GameEngineCore::EngineResourcesCreate()
 {
 
 	{
-		std::vector<GameEngineVertex> RectVertex = std::vector<GameEngineVertex>(4 * 6);
+		std::vector<GameEngineVertex> Vertex = std::vector<GameEngineVertex>(4 * 6);
 
 		{
-			RectVertex[0] = { float4({ -0.5f, 0.5f, 0.5f }) };
-			RectVertex[1] = { float4({ 0.5f, 0.5f, 0.5f }) };
-			RectVertex[2] = { float4({ 0.5f, -0.5f, 0.5f }) };
-			RectVertex[3] = { float4({ -0.5f, -0.5f, 0.5f }) };
+			Vertex[0] = { float4({ -0.5f, 0.5f, 0.5f }) };
+			Vertex[1] = { float4({ 0.5f, 0.5f, 0.5f }) };
+			Vertex[2] = { float4({ 0.5f, -0.5f, 0.5f }) };
+			Vertex[3] = { float4({ -0.5f, -0.5f, 0.5f }) };
 
-			RectVertex[4] = { float4::RotateXDegree(RectVertex[0].Postion, 180.0f) };
-			RectVertex[5] = { float4::RotateXDegree(RectVertex[1].Postion, 180.0f) };
-			RectVertex[6] = { float4::RotateXDegree(RectVertex[2].Postion, 180.0f) };
-			RectVertex[7] = { float4::RotateXDegree(RectVertex[3].Postion, 180.0f) };
+			Vertex[4] = { float4::RotateXDegree(Vertex[0].Postion, 180.0f) };
+			Vertex[5] = { float4::RotateXDegree(Vertex[1].Postion, 180.0f) };
+			Vertex[6] = { float4::RotateXDegree(Vertex[2].Postion, 180.0f) };
+			Vertex[7] = { float4::RotateXDegree(Vertex[3].Postion, 180.0f) };
 		}
 
 		{
-			RectVertex[8] = { float4::RotateYDegree(RectVertex[0].Postion, 90.0f) };
-			RectVertex[9] = { float4::RotateYDegree(RectVertex[1].Postion, 90.0f) };
-			RectVertex[10] = { float4::RotateYDegree(RectVertex[2].Postion, 90.0f) };
-			RectVertex[11] = { float4::RotateYDegree(RectVertex[3].Postion, 90.0f) };
+			Vertex[8] = { float4::RotateYDegree(Vertex[0].Postion, 90.0f) };
+			Vertex[9] = { float4::RotateYDegree(Vertex[1].Postion, 90.0f) };
+			Vertex[10] = { float4::RotateYDegree(Vertex[2].Postion, 90.0f) };
+			Vertex[11] = { float4::RotateYDegree(Vertex[3].Postion, 90.0f) };
 
-			RectVertex[12] = { float4::RotateYDegree(RectVertex[0].Postion, -90.0f) };
-			RectVertex[13] = { float4::RotateYDegree(RectVertex[1].Postion, -90.0f) };
-			RectVertex[14] = { float4::RotateYDegree(RectVertex[2].Postion, -90.0f) };
-			RectVertex[15] = { float4::RotateYDegree(RectVertex[3].Postion, -90.0f) };
+			Vertex[12] = { float4::RotateYDegree(Vertex[0].Postion, -90.0f) };
+			Vertex[13] = { float4::RotateYDegree(Vertex[1].Postion, -90.0f) };
+			Vertex[14] = { float4::RotateYDegree(Vertex[2].Postion, -90.0f) };
+			Vertex[15] = { float4::RotateYDegree(Vertex[3].Postion, -90.0f) };
 		}
 
 		{
-			RectVertex[16] = { float4::RotateXDegree(RectVertex[0].Postion, 90.0f) };
-			RectVertex[17] = { float4::RotateXDegree(RectVertex[1].Postion, 90.0f) };
-			RectVertex[18] = { float4::RotateXDegree(RectVertex[2].Postion, 90.0f) };
-			RectVertex[19] = { float4::RotateXDegree(RectVertex[3].Postion, 90.0f) };
+			Vertex[16] = { float4::RotateXDegree(Vertex[0].Postion, 90.0f) };
+			Vertex[17] = { float4::RotateXDegree(Vertex[1].Postion, 90.0f) };
+			Vertex[18] = { float4::RotateXDegree(Vertex[2].Postion, 90.0f) };
+			Vertex[19] = { float4::RotateXDegree(Vertex[3].Postion, 90.0f) };
 
-			RectVertex[20] = { float4::RotateXDegree(RectVertex[0].Postion, -90.0f) };
-			RectVertex[21] = { float4::RotateXDegree(RectVertex[1].Postion, -90.0f) };
-			RectVertex[22] = { float4::RotateXDegree(RectVertex[2].Postion, -90.0f) };
-			RectVertex[23] = { float4::RotateXDegree(RectVertex[3].Postion, -90.0f) };
+			Vertex[20] = { float4::RotateXDegree(Vertex[0].Postion, -90.0f) };
+			Vertex[21] = { float4::RotateXDegree(Vertex[1].Postion, -90.0f) };
+			Vertex[22] = { float4::RotateXDegree(Vertex[2].Postion, -90.0f) };
+			Vertex[23] = { float4::RotateXDegree(Vertex[3].Postion, -90.0f) };
 		}
 
-		for (size_t i = 0; i < RectVertex.size(); i += 4)
+		for (size_t i = 0; i < Vertex.size(); i += 4)
 		{
-			RectVertex[i + 0].Texcoord = { 0.0f, 0.0f };
-			RectVertex[i + 1].Texcoord = { 1.0f, 0.0f };
-			RectVertex[i + 2].Texcoord = { 1.0f, 1.0f };
-			RectVertex[i + 3].Texcoord = { 0.0f, 1.0f };
+			Vertex[i + 0].Texcoord = { 0.0f, 0.0f };
+			Vertex[i + 1].Texcoord = { 1.0f, 0.0f };
+			Vertex[i + 2].Texcoord = { 1.0f, 1.0f };
+			Vertex[i + 3].Texcoord = { 0.0f, 1.0f };
 		}
 
-		GameEngineVertexBufferManager::GetInst().Create("Box", RectVertex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
+		GameEngineVertexBufferManager::GetInst().Create("Box", Vertex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
 	}
 
 	{
-		std::vector<UINT> RectIndex;
+		std::vector<UINT> BoxIndex;
 
 		for (int i = 0; i < 6; i++)
 		{
-			RectIndex.push_back(i * 4 + 0);
-			RectIndex.push_back(i * 4 + 1);
-			RectIndex.push_back(i * 4 + 2);
+			BoxIndex.push_back(i * 4 + 0);
+			BoxIndex.push_back(i * 4 + 1);
+			BoxIndex.push_back(i * 4 + 2);
 
-			RectIndex.push_back(i * 4 + 0);
-			RectIndex.push_back(i * 4 + 2);
-			RectIndex.push_back(i * 4 + 3);
+			BoxIndex.push_back(i * 4 + 0);
+			BoxIndex.push_back(i * 4 + 2);
+			BoxIndex.push_back(i * 4 + 3);
 		}
 
-		GameEngineIndexBufferManager::GetInst().Create("Box", RectIndex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
+		GameEngineIndexBufferManager::GetInst().Create("Box", BoxIndex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
 	}
 
 
@@ -265,8 +265,6 @@ void GameEngineCore::EngineResourcesCreate()
 		GameEngineRasterizer* Ptr = GameEngineRasterizerManager::GetInst().Create("EngineBaseRasterizer", Info);
 		Ptr->AddWindowSizeViewPort();
 	}
-
-
 
 	{
 		D3D11_BLEND_DESC BlendInfo = { 0 };

@@ -86,6 +86,7 @@ public:
 
 	GameEngineRenderingPipeLine* Clone();
 
+	void Copy(GameEngineRenderingPipeLine* _Value);
 
 	void RasterizerClone();
 

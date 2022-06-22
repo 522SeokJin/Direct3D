@@ -25,5 +25,6 @@ private:		//delete operator
 	GameEngineMesh& operator=(const GameEngineMesh&& _other) = delete; // default RValue Copy operator 디폴트 RValue 대입연산자
 
 public:
+
 };
 
