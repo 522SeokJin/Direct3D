@@ -16,7 +16,7 @@ CameraComponent::CameraComponent() :
 	FovAngleY_(90.0f),
 	CamSize_(GameEngineWindow::GetInst().GetSize()),
 	NearZ_(0.1f),
-	FarZ_(1000.0f),
+	FarZ_(10000.0f),
 	DebugRenderCount_(0),
 	CameraBufferTarget_(nullptr)
 {
@@ -189,28 +189,6 @@ void CameraComponent::NextLevelMoveRenderer(CameraComponent* _NextCamera, GameEn
 			++BeginIter;
 
 		}
-	}
-}
-
-void CameraComponent::CameraZoomReset()
-{
-	if (ProjectionMode_ == ProjectionMode::Orthographic) // 직교투영일때
-	{
-		CamSize_ = GameEngineWindow::GetInst().GetSize();
-	}
-}
-
-void CameraComponent::CameraZoomSetting(float _Value)
-{
-	// 카메라가 비추는 화면 비율 조정
-	if (ProjectionMode_ == ProjectionMode::Orthographic) // 직교투영일때
-	{
-		ZoomValue_ = _Value;
-		CamSize_ = GameEngineWindow::GetInst().GetSize() * _Value;
-	}
-	else // 원근투영일때
-	{
-		// 카메라 z위치를 바꾸면 될거같긴함
 	}
 }
 

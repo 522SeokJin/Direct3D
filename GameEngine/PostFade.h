@@ -17,6 +17,10 @@ struct FadeData
 	float Time;
 
 	FadeData()
+		: Clip(1)
+		, Ratio(0.0f)
+		, CurTime(0.0f)
+		, Time(0.0f)
 	{
 
 	}

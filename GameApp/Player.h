@@ -23,7 +23,6 @@ public:
 
 protected:
 	GameEngineImageRenderer* PlayerImageRenderer;
-
 	GameEngineCollision* PlayerCollision;
 
 	GameEngineFSM StateManager_;

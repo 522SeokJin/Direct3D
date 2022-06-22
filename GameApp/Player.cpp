@@ -10,6 +10,8 @@ Player* Player::MainPlayer;
 
 Player::Player()
 	: Speed(300.0f)
+	, PlayerImageRenderer(nullptr)
+	, PlayerCollision(nullptr)
 {
 	MainPlayer = this;
 }
@@ -27,7 +29,7 @@ void Player::Start()
 		Renderer->SetRenderingPipeLine("Color");
 		Renderer->SetMesh("Sphere");
 
-		Renderer->GetTransform()->SetLocalScaling({ 100.0f, 100.0f, 100.0f });
+		Renderer->GetTransform()->SetLocalScaling({ 10.0f, 10.0f, 10.0f });
 		Renderer->GetTransform()->SetLocalPosition({ 0.0f, 0.0f, 0.0f });
 		Renderer->ShaderHelper.SettingConstantBufferSet("ResultColor", float4(1.0f, 0.0f, 0.0f));
 

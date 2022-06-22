@@ -1,8 +1,11 @@
 #include "PreCompile.h"
 #include "SKySphereActor.h"
 #include "GameEngineRenderer.h"
+#include "GameEngineLevel.h"
+#include "CameraActor.h"
 
 SKySphereActor::SKySphereActor()
+	: Renderer(nullptr)
 {
 
 }
@@ -12,10 +15,17 @@ SKySphereActor::~SKySphereActor()
 
 }
 
+void SKySphereActor::SetRadius(float _Radius)
+{
+	// 반지름을 보통 인자로 넣어주므로
+	Renderer->GetTransform()->SetLocalScaling(
+		{ _Radius * 2.0f, _Radius * 2.0f, _Radius * 2.0f });
+}
+
 void SKySphereActor::Start()
 {
 	{
-		GameEngineRenderer* Renderer = CreateTransformComponent<GameEngineRenderer>(GetTransform());
+		Renderer = CreateTransformComponent<GameEngineRenderer>(GetTransform());
 		Renderer->SetRenderingPipeLine("Texture");
 		Renderer->SetMesh("Sphere");
 		Renderer->GetGameEngineRenderingPipeLine()->SetRasterizer("EngineBaseRasterizerFront");
@@ -29,5 +39,10 @@ void SKySphereActor::Start()
 
 void SKySphereActor::Update(float _DeltaTime)
 {
-}
+	float Far = GetLevel()->GetMainCamera()->GetFar();
+	Far *= 0.98f;
+	SetRadius(Far);
 
+	float4 WorldPos = GetLevel()->GetMainCameraActor()->GetTransform()->GetWorldPosition();
+	GetTransform()->SetWorldPosition(WorldPos);
+}

@@ -292,6 +292,7 @@ void GameEngineCore::EngineResourcesCreate_Rasterizer()
 		Info.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
 		Info.AntialiasedLineEnable = true;
 		Info.MultisampleEnable = true;
+		Info.DepthClipEnable = true;
 		GameEngineRasterizer* Ptr = GameEngineRasterizerManager::GetInst().Create("EngineBaseRasterizerBack", Info);
 		Ptr->AddWindowSizeViewPort();
 	}
@@ -302,6 +303,7 @@ void GameEngineCore::EngineResourcesCreate_Rasterizer()
 		Info.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
 		Info.AntialiasedLineEnable = true;
 		Info.MultisampleEnable = true;
+		Info.DepthClipEnable = true;
 		GameEngineRasterizer* Ptr = GameEngineRasterizerManager::GetInst().Create("EngineBaseRasterizerFront", Info);
 		Ptr->AddWindowSizeViewPort();
 	}

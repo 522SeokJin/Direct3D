@@ -25,14 +25,12 @@ private:	// member Var
 	float4						CamSize_;					// 
 	float						NearZ_;						// 
 	float						FarZ_;						// 
-	float						ZoomValue;
 
 private:
 	std::map<int, std::list<GameEngineRenderer*>> RendererList_;
 
 private:
 	int DebugRenderCount_;
-	float ZoomValue_;
 	std::vector<GameEngineDebugRenderData> DebugVector_;
 	GameEngineRenderTarget* CameraBufferTarget_;
 
@@ -63,16 +61,10 @@ public:
 		return CameraBufferTarget_;
 	}
 
-	inline float GetZoomValue()
+	inline float GetFar()
 	{
-		return ZoomValue_;
+		return FarZ_;
 	}
-
-
-
-public:
-	void CameraZoomReset();
-	void CameraZoomSetting(float _Value);
 
 public:
 	void SetProjectionMode(ProjectionMode _ProjectionMode);

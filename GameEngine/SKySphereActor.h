@@ -25,8 +25,10 @@ protected:
 	void Update(float _DeltaTime) override;
 
 private:
-	
+	void SetRadius(float _Radius);
+
 public:
 	ResultColor Data;
+	GameEngineRenderer* Renderer;
 };
 

@@ -64,9 +64,9 @@ void SmallPostBlur::SetFilter(std::string _TextureName)
 	Data.ImagePixelUVY = 1.0f / Target_->GetTexture(0)->GetTextureSize().y;
 
 	Data.FilterSum = 0.0f;
-	for (size_t y = 0; y < Filter->GetTextureSize().iy(); y++)
+	for (int y = 0; y < Filter->GetTextureSize().iy(); y++)
 	{
-		for (size_t x = 0; x < Filter->GetTextureSize().ix(); x++)
+		for (int x = 0; x < Filter->GetTextureSize().ix(); x++)
 		{
 			Data.FilterSum += Filter->GetPixel(x, y).x;
 		}
