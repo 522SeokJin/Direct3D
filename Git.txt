@@ -1,0 +1,6 @@
+
+git add -f 강제 파일 포함
+
+git add -f \ThirdParty\x64\Release\DirectXTex
+
+식으로 특정 경로를 강제로 커밋에 포함시킬수 있다.
