@@ -33,8 +33,8 @@ public:
 
 
 protected:
-	virtual void Start();
-	virtual void Update(float _DeltaTime);
+	void Start() override;
+	void Update(float _DeltaTime) override;
 
 private:
 	GameEngineTransform OriginTransform;
@@ -43,8 +43,6 @@ private:
 	bool IsFreeCameraMode_;
 	ProjectionMode PrevCamMode_;
 	CameraComponent* Camera_;
-
-
 
 };
 

@@ -31,21 +31,23 @@ GameEngineRasterizerManager::GameEngineRasterizerManager(GameEngineRasterizerMan
 
 GameEngineRasterizer* GameEngineRasterizerManager::Create(const std::string& _Name, const D3D11_RASTERIZER_DESC& _RasterizerDesc)
 {
-	GameEngineRasterizer* FindRes = Find(_Name);
+	std::string UpperName = GameEngineString::toupper(_Name);
+
+	GameEngineRasterizer* FindRes = Find(UpperName);
 
 	if (nullptr != FindRes)
 	{
-		GameEngineDebug::MsgBoxError(_Name + " Is Overlap Create");
+		GameEngineDebug::MsgBoxError(UpperName + " Is Overlap Create");
 	}
 
 
 	GameEngineRasterizer* NewRes = new GameEngineRasterizer();
-	NewRes->SetName(_Name);
+	NewRes->SetName(UpperName);
 	NewRes->Create(_RasterizerDesc);
 
 	// 그리고 뭘할거냐?
 
-	ResourcesMap.insert(std::map<std::string, GameEngineRasterizer*>::value_type(_Name, NewRes));
+	ResourcesMap.insert(std::map<std::string, GameEngineRasterizer*>::value_type(UpperName, NewRes));
 	return NewRes;
 }
 
@@ -56,7 +58,9 @@ GameEngineRasterizer* GameEngineRasterizerManager::Load(const std::string& _Path
 
 GameEngineRasterizer* GameEngineRasterizerManager::Load(const std::string& _Name, const std::string& _Path)
 {
-	GameEngineRasterizer* FindRes = Find(_Name);
+	std::string UpperName = GameEngineString::toupper(_Name);
+
+	GameEngineRasterizer* FindRes = Find(UpperName);
 
 	if (nullptr != FindRes)
 	{
@@ -64,16 +68,18 @@ GameEngineRasterizer* GameEngineRasterizerManager::Load(const std::string& _Name
 	}
 
 	GameEngineRasterizer* NewRes = new GameEngineRasterizer();
-	NewRes->SetName(_Name);
+	NewRes->SetName(UpperName);
 
 
-	ResourcesMap.insert(std::map<std::string, GameEngineRasterizer*>::value_type(_Name, NewRes));
+	ResourcesMap.insert(std::map<std::string, GameEngineRasterizer*>::value_type(UpperName, NewRes));
 	return NewRes;
 }
 
 GameEngineRasterizer* GameEngineRasterizerManager::Find(const std::string& _Name)
 {
-	std::map<std::string, GameEngineRasterizer*>::iterator FindIter = ResourcesMap.find(_Name);
+	std::string UpperName = GameEngineString::toupper(_Name);
+
+	std::map<std::string, GameEngineRasterizer*>::iterator FindIter = ResourcesMap.find(UpperName);
 
 	if (FindIter != ResourcesMap.end())
 	{

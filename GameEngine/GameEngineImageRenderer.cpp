@@ -160,17 +160,17 @@ GameEngineImageRenderer::~GameEngineImageRenderer()
 void GameEngineImageRenderer::Start()
 {
 	GameEngineRenderer::Start();
-	SetRenderingPipeLine("Texture");
+	SetRenderingPipeLine("TextureAtlas");
 }
 
 void GameEngineImageRenderer::SetRenderingPipeLineSettingNext()
 {
-	ShaderHelper.SettingConstantBufferLink("TextureCutData", CutData);
+	ShaderHelper.SettingConstantBufferLink("TextureAtlasData", CutData);
 
 	CorrectResultColor_.vMulColor = float4::ONE;
 	CorrectResultColor_.vPlusColor = float4::ZERO;
 
-	ShaderHelper.SettingConstantBufferLink("CorrectResultColor", CorrectResultColor_);
+	ShaderHelper.SettingConstantBufferLink("TextureAtlasResultColor", CorrectResultColor_);
 }
 
 void GameEngineImageRenderer::SetIndex(const int Index) 

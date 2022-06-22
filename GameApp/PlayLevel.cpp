@@ -11,6 +11,7 @@
 #include <GameEngine/GameEngineTransform.h>
 #include <GameEngine/CameraActor.h>
 #include <GameEngine/MouseActor.h>
+#include <GameEngine/SKySphereActor.h>
 #include <GameEngine/GameEngineGUI.h>
 #include <GameEngine/GameEngineRenderWindow.h>
 #include "UserGame.h"
@@ -95,22 +96,34 @@ void PlayLevel::LevelChangeStartEvent(GameEngineLevel* _PrevLevel)
 
 void PlayLevel::CreateActorLevel()
 {
-	GameEngineTexture* Texture = GameEngineTextureManager::GetInst().Find("Animation.png");
-	Texture->Cut(8, 8);
+	static bool Check = false;
+	
+	if (true == Check)
+	{
+		return;
+	}
 
 	{
 		MActor = CreateActor<MouseActor>();
 		MActor->GetUIRenderer()->SetRenderGroup(1000);
 	}
-
-	if (nullptr == Player::MainPlayer)
+	
 	{
 		Player* Actor = CreateActor<Player>();
 	}
 
+	{
+		Map* Actor = CreateActor<Map>();
+	}
+	
+	{
+		SKySphereActor* Actor = CreateActor<SKySphereActor>();
+	}
 
 	{
 		TopUI* Actor = CreateActor<TopUI>();
 		Actor->GetTransform()->SetWorldPosition(float4(0.0f, 0.0f, 0.0f));
 	}
+
+	Check = true;
 }

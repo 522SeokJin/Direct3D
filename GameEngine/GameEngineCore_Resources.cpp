@@ -10,6 +10,305 @@
 #include "GameEngineDepthStencil.h"
 #include "EngineVertex.h"
 
+void GameEngineCore::EngineResourcesCreate_Mesh()
+{
+	// Sphere
+		// 스피어
+	{
+		GameEngineVertex V;
+		std::vector<GameEngineVertex> VBVector;
+		std::vector<UINT> IBVector;
+
+		float Radius = 0.5f;
+		// 북극점부터 시작합니다.
+		V.Postion = float4(0.0f, Radius, 0.0f, 1.0f);
+		V.Texcoord = float4(0.5f, 0.0f);
+		// 노말 백터 혹은 법선백터라고 불리며
+		// 면에 수직인 벡터를 의미하게 된다.
+		// 빛을 반사할때 필수.
+		V.Normal = float4(0.0f, Radius, 0.0f, 1.0f);
+		V.Normal.Normalize3D();
+		V.Normal.w = 0.0f;
+		V.Tangent = float4(1.0f, 0.0f, 0.0f, 0.0f);
+		V.BiNormal = float4(0.0f, 0.0f, 1.0f, 0.0f);
+
+		VBVector.push_back(V);
+
+		UINT iStackCount = 40; // 가로 분할 개수입니다.
+		UINT iSliceCount = 40; // 세로분할 개수
+
+		float yRotAngle = GameEngineMath::PI / (float)iStackCount;
+		float zRotAngle = (GameEngineMath::PI * 2) / (float)iSliceCount;
+
+		// UV의 가로세로 간격값을 구한다.
+		float yUvRatio = 1.0f / (float)iStackCount;
+		float zUvRatio = 1.0f / (float)iStackCount;
+
+		for (UINT y = 1; y < iStackCount; ++y)
+		{
+			// 각 간격에 대한 각도값
+			float phi = y * yRotAngle;
+			for (UINT z = 0; z < iSliceCount + 1; ++z)
+			{
+				float theta = z * zRotAngle;
+				V.Postion = float4{
+					Radius * sinf(y * yRotAngle) * cosf(z * zRotAngle),
+					Radius * cosf(y * yRotAngle),
+					Radius * sinf(y * yRotAngle) * sinf(z * zRotAngle),
+					1.0f // 위치 크기 값에 영향을 주기 위해서
+				};
+
+				// V.Pos *= GameEngineRandom::RandomFloat(-0.9f, 0.1f);
+
+				V.Texcoord = float4(yUvRatio * z, zUvRatio * y);
+				V.Normal = V.Postion.NormalizeReturn3D();
+				V.Normal.w = 0.0f;
+
+				V.Tangent.x = -Radius * sinf(phi) * sinf(theta);
+				V.Tangent.y = 0.0f;
+				V.Tangent.z = Radius * sinf(phi) * cosf(theta);
+				V.Tangent = V.Tangent.NormalizeReturn3D();
+				V.Tangent.w = 0.0f;
+
+				V.BiNormal = float4::Cross3D(V.Tangent, V.Normal);
+				V.BiNormal = V.BiNormal.NormalizeReturn3D();
+				V.BiNormal.w = 0.0f;
+
+				VBVector.push_back(V);
+			}
+		}
+
+		// 남극점
+		V.Postion = float4(0.0f, -Radius, 0.0f, 1.0f);
+		V.Texcoord = float4(0.5f, 1.0f);
+		V.Normal = float4(0.0f, -Radius, 0.0f, 1.0f);
+		V.Normal.Normalize3D();
+		V.Normal.w = 0.0f;
+		V.Tangent = float4(-1.0f, 0.0f, 0.0f, 0.0f);
+		V.BiNormal = float4(0.0f, 0.0f, -1.0f, 0.0f);
+		VBVector.push_back(V);
+
+		// 인덱스 버퍼를 만듭니다.
+		IBVector.clear();
+
+		// 북극점을 이루는 점을 만드는건.
+		for (UINT i = 0; i < iSliceCount; i++)
+		{
+			// 시작은 무조건 북극점
+			IBVector.push_back(0);
+			IBVector.push_back(i + 2);
+			IBVector.push_back(i + 1);
+		}
+
+		for (UINT y = 0; y < iStackCount - 2; y++)
+		{
+			for (UINT z = 0; z < iSliceCount; z++)
+			{
+				IBVector.push_back((iSliceCount + 1) * y + z + 1);
+				IBVector.push_back((iSliceCount + 1) * (y + 1) + (z + 1) + 1);
+				IBVector.push_back((iSliceCount + 1) * (y + 1) + z + 1);
+
+				IBVector.push_back((iSliceCount + 1) * y + z + 1);
+				IBVector.push_back((iSliceCount + 1) * y + (z + 1) + 1);
+				IBVector.push_back((iSliceCount + 1) * (y + 1) + (z + 1) + 1);
+
+			}
+		}
+
+		// 마지막으로 남극점 인덱스
+		UINT iBotIndex = (UINT)VBVector.size() - 1;
+		for (UINT i = 0; i < iSliceCount; i++)
+		{
+			// 시작은 무조건 북극점
+			IBVector.push_back(iBotIndex);
+			IBVector.push_back(iBotIndex - (i + 2));
+			IBVector.push_back(iBotIndex - (i + 1));
+		}
+
+		GameEngineVertexBufferManager::GetInst().Create("Sphere", VBVector, D3D11_USAGE::D3D11_USAGE_DEFAULT);
+		GameEngineIndexBufferManager::GetInst().Create("Sphere", IBVector, D3D11_USAGE::D3D11_USAGE_DEFAULT);
+	}
+
+
+	// Box
+	{
+		std::vector<GameEngineVertex> Vertex = std::vector<GameEngineVertex>(4 * 6);
+
+		{
+			Vertex[0] = { float4({ -0.5f, 0.5f, 0.5f }) };
+			Vertex[1] = { float4({ 0.5f, 0.5f, 0.5f }) };
+			Vertex[2] = { float4({ 0.5f, -0.5f, 0.5f }) };
+			Vertex[3] = { float4({ -0.5f, -0.5f, 0.5f }) };
+
+			Vertex[4] = { float4::RotateXDegree(Vertex[0].Postion, 180.0f) };
+			Vertex[5] = { float4::RotateXDegree(Vertex[1].Postion, 180.0f) };
+			Vertex[6] = { float4::RotateXDegree(Vertex[2].Postion, 180.0f) };
+			Vertex[7] = { float4::RotateXDegree(Vertex[3].Postion, 180.0f) };
+		}
+
+		{
+			Vertex[8] = { float4::RotateYDegree(Vertex[0].Postion, 90.0f) };
+			Vertex[9] = { float4::RotateYDegree(Vertex[1].Postion, 90.0f) };
+			Vertex[10] = { float4::RotateYDegree(Vertex[2].Postion, 90.0f) };
+			Vertex[11] = { float4::RotateYDegree(Vertex[3].Postion, 90.0f) };
+
+			Vertex[12] = { float4::RotateYDegree(Vertex[0].Postion, -90.0f) };
+			Vertex[13] = { float4::RotateYDegree(Vertex[1].Postion, -90.0f) };
+			Vertex[14] = { float4::RotateYDegree(Vertex[2].Postion, -90.0f) };
+			Vertex[15] = { float4::RotateYDegree(Vertex[3].Postion, -90.0f) };
+		}
+
+		{
+			Vertex[16] = { float4::RotateXDegree(Vertex[0].Postion, 90.0f) };
+			Vertex[17] = { float4::RotateXDegree(Vertex[1].Postion, 90.0f) };
+			Vertex[18] = { float4::RotateXDegree(Vertex[2].Postion, 90.0f) };
+			Vertex[19] = { float4::RotateXDegree(Vertex[3].Postion, 90.0f) };
+
+			Vertex[20] = { float4::RotateXDegree(Vertex[0].Postion, -90.0f) };
+			Vertex[21] = { float4::RotateXDegree(Vertex[1].Postion, -90.0f) };
+			Vertex[22] = { float4::RotateXDegree(Vertex[2].Postion, -90.0f) };
+			Vertex[23] = { float4::RotateXDegree(Vertex[3].Postion, -90.0f) };
+		}
+
+		for (size_t i = 0; i < Vertex.size(); i += 4)
+		{
+			Vertex[i + 0].Texcoord = { 0.0f, 0.0f };
+			Vertex[i + 1].Texcoord = { 1.0f, 0.0f };
+			Vertex[i + 2].Texcoord = { 1.0f, 1.0f };
+			Vertex[i + 3].Texcoord = { 0.0f, 1.0f };
+		}
+
+		GameEngineVertexBufferManager::GetInst().Create("Box", Vertex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
+	}
+
+	{
+		std::vector<UINT> BoxIndex;
+
+		for (int i = 0; i < 6; i++)
+		{
+			BoxIndex.push_back(i * 4 + 0);
+			BoxIndex.push_back(i * 4 + 1);
+			BoxIndex.push_back(i * 4 + 2);
+
+			BoxIndex.push_back(i * 4 + 0);
+			BoxIndex.push_back(i * 4 + 2);
+			BoxIndex.push_back(i * 4 + 3);
+		}
+
+		GameEngineIndexBufferManager::GetInst().Create("Box", BoxIndex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
+	}
+
+	{
+		std::vector<GameEngineVertex> RectVertex = std::vector<GameEngineVertex>(4);
+
+		{
+			// 앞면
+			RectVertex[0] = { float4({ -0.5f, 0.5f, 0.0f }),  { 0.0f, 0.0f } };
+			RectVertex[1] = { float4({ 0.5f, 0.5f, 0.0f }),  { 1.0f, 0.0f } };
+			RectVertex[2] = { float4({ 0.5f, -0.5f, 0.0f }),  { 1.0f, 1.0f } };
+			RectVertex[3] = { float4({ -0.5f, -0.5f, 0.0f }),  { 0.0f, 1.0f } };
+		}
+
+		GameEngineVertexBufferManager::GetInst().Create("Rect", RectVertex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
+	}
+
+	{
+		std::vector<UINT> RectIndex;
+
+		RectIndex.push_back(0);
+		RectIndex.push_back(1);
+		RectIndex.push_back(2);
+
+		RectIndex.push_back(0);
+		RectIndex.push_back(2);
+		RectIndex.push_back(3);
+
+		GameEngineIndexBufferManager::GetInst().Create("Rect", RectIndex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
+	}
+
+	{
+		std::vector<GameEngineVertex> RectVertex = std::vector<GameEngineVertex>(5);
+
+		{
+			// 앞면
+			RectVertex[0] = { float4({ -0.5f, 0.5f, 0.0f }),  { 0.0f, 0.0f } };
+			RectVertex[1] = { float4({ 0.5f, 0.5f, 0.0f }),  { 1.0f, 0.0f } };
+			RectVertex[2] = { float4({ 0.5f, -0.5f, 0.0f }),  { 1.0f, 1.0f } };
+			RectVertex[3] = { float4({ -0.5f, -0.5f, 0.0f }),  { 0.0f, 1.0f } };
+			RectVertex[4] = { float4({ -0.5f, 0.5f, 0.0f }),  { 0.0f, 0.0f } };
+		}
+
+		GameEngineVertexBufferManager::GetInst().Create("DebugRect", RectVertex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
+	}
+
+	{
+		std::vector<UINT> RectIndex;
+
+		RectIndex.push_back(0);
+		RectIndex.push_back(1);
+		RectIndex.push_back(2);
+		RectIndex.push_back(3);
+		RectIndex.push_back(4);
+
+		GameEngineIndexBufferManager::GetInst().Create("DebugRect", RectIndex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
+	}
+
+	{
+		std::vector<GameEngineVertex> RectVertex = std::vector<GameEngineVertex>(4);
+
+		{
+			// 앞면
+			RectVertex[0] = { float4({ -1.0f, 1.0f, 0.0f }),float4({ 0.0f, 0.0f }) };
+			RectVertex[1] = { float4({ 1.0f, 1.0f, 0.0f }), float4({ 1.0f, 0.0f }) };
+			RectVertex[2] = { float4({ 1.0f, -1.0f, 0.0f }), float4({ 1.0f, 1.0f }) };
+			RectVertex[3] = { float4({ -1.0f, -1.0f, 0.0f }),  float4({ 0.0f, 1.0f }) };
+		}
+
+		GameEngineVertexBufferManager::GetInst().Create("FullRect", RectVertex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
+	}
+
+	{
+		std::vector<UINT> RectIndex;
+
+		RectIndex.push_back(0);
+		RectIndex.push_back(1);
+		RectIndex.push_back(2);
+
+		RectIndex.push_back(0);
+		RectIndex.push_back(2);
+		RectIndex.push_back(3);
+
+		GameEngineIndexBufferManager::GetInst().Create("FullRect", RectIndex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
+	}
+
+}
+
+void GameEngineCore::EngineResourcesCreate_Rasterizer()
+{
+
+	{
+		D3D11_RASTERIZER_DESC Info = { D3D11_FILL_MODE::D3D11_FILL_SOLID, };
+		Info.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+		Info.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+		Info.AntialiasedLineEnable = true;
+		Info.MultisampleEnable = true;
+		GameEngineRasterizer* Ptr = GameEngineRasterizerManager::GetInst().Create("EngineBaseRasterizerBack", Info);
+		Ptr->AddWindowSizeViewPort();
+	}
+
+	{
+		D3D11_RASTERIZER_DESC Info = { D3D11_FILL_MODE::D3D11_FILL_SOLID, };
+		Info.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+		Info.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
+		Info.AntialiasedLineEnable = true;
+		Info.MultisampleEnable = true;
+		GameEngineRasterizer* Ptr = GameEngineRasterizerManager::GetInst().Create("EngineBaseRasterizerFront", Info);
+		Ptr->AddWindowSizeViewPort();
+	}
+
+}
+
+
 
 void GameEngineCore::EngineResourcesLoad()
 {
@@ -99,172 +398,8 @@ void GameEngineCore::EngineResourcesLoad()
 }
 void GameEngineCore::EngineResourcesCreate()
 {
-
-	{
-		std::vector<GameEngineVertex> Vertex = std::vector<GameEngineVertex>(4 * 6);
-
-		{
-			Vertex[0] = { float4({ -0.5f, 0.5f, 0.5f }) };
-			Vertex[1] = { float4({ 0.5f, 0.5f, 0.5f }) };
-			Vertex[2] = { float4({ 0.5f, -0.5f, 0.5f }) };
-			Vertex[3] = { float4({ -0.5f, -0.5f, 0.5f }) };
-
-			Vertex[4] = { float4::RotateXDegree(Vertex[0].Postion, 180.0f) };
-			Vertex[5] = { float4::RotateXDegree(Vertex[1].Postion, 180.0f) };
-			Vertex[6] = { float4::RotateXDegree(Vertex[2].Postion, 180.0f) };
-			Vertex[7] = { float4::RotateXDegree(Vertex[3].Postion, 180.0f) };
-		}
-
-		{
-			Vertex[8] = { float4::RotateYDegree(Vertex[0].Postion, 90.0f) };
-			Vertex[9] = { float4::RotateYDegree(Vertex[1].Postion, 90.0f) };
-			Vertex[10] = { float4::RotateYDegree(Vertex[2].Postion, 90.0f) };
-			Vertex[11] = { float4::RotateYDegree(Vertex[3].Postion, 90.0f) };
-
-			Vertex[12] = { float4::RotateYDegree(Vertex[0].Postion, -90.0f) };
-			Vertex[13] = { float4::RotateYDegree(Vertex[1].Postion, -90.0f) };
-			Vertex[14] = { float4::RotateYDegree(Vertex[2].Postion, -90.0f) };
-			Vertex[15] = { float4::RotateYDegree(Vertex[3].Postion, -90.0f) };
-		}
-
-		{
-			Vertex[16] = { float4::RotateXDegree(Vertex[0].Postion, 90.0f) };
-			Vertex[17] = { float4::RotateXDegree(Vertex[1].Postion, 90.0f) };
-			Vertex[18] = { float4::RotateXDegree(Vertex[2].Postion, 90.0f) };
-			Vertex[19] = { float4::RotateXDegree(Vertex[3].Postion, 90.0f) };
-
-			Vertex[20] = { float4::RotateXDegree(Vertex[0].Postion, -90.0f) };
-			Vertex[21] = { float4::RotateXDegree(Vertex[1].Postion, -90.0f) };
-			Vertex[22] = { float4::RotateXDegree(Vertex[2].Postion, -90.0f) };
-			Vertex[23] = { float4::RotateXDegree(Vertex[3].Postion, -90.0f) };
-		}
-
-		for (size_t i = 0; i < Vertex.size(); i += 4)
-		{
-			Vertex[i + 0].Texcoord = { 0.0f, 0.0f };
-			Vertex[i + 1].Texcoord = { 1.0f, 0.0f };
-			Vertex[i + 2].Texcoord = { 1.0f, 1.0f };
-			Vertex[i + 3].Texcoord = { 0.0f, 1.0f };
-		}
-
-		GameEngineVertexBufferManager::GetInst().Create("Box", Vertex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
-	}
-
-	{
-		std::vector<UINT> BoxIndex;
-
-		for (int i = 0; i < 6; i++)
-		{
-			BoxIndex.push_back(i * 4 + 0);
-			BoxIndex.push_back(i * 4 + 1);
-			BoxIndex.push_back(i * 4 + 2);
-
-			BoxIndex.push_back(i * 4 + 0);
-			BoxIndex.push_back(i * 4 + 2);
-			BoxIndex.push_back(i * 4 + 3);
-		}
-
-		GameEngineIndexBufferManager::GetInst().Create("Box", BoxIndex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
-	}
-
-
-
-	{
-		std::vector<GameEngineVertex> RectVertex = std::vector<GameEngineVertex>(4);
-
-		{
-			// 앞면
-			RectVertex[0] = { float4({ -0.5f, 0.5f, 0.0f }),  { 0.0f, 0.0f } };
-			RectVertex[1] = { float4({ 0.5f, 0.5f, 0.0f }),  { 1.0f, 0.0f } };
-			RectVertex[2] = { float4({ 0.5f, -0.5f, 0.0f }),  { 1.0f, 1.0f } };
-			RectVertex[3] = { float4({ -0.5f, -0.5f, 0.0f }),  { 0.0f, 1.0f } };
-		}
-
-		GameEngineVertexBufferManager::GetInst().Create("Rect", RectVertex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
-	}
-
-
-	{
-		std::vector<UINT> RectIndex;
-
-		RectIndex.push_back(0);
-		RectIndex.push_back(1);
-		RectIndex.push_back(2);
-
-		RectIndex.push_back(0);
-		RectIndex.push_back(2);
-		RectIndex.push_back(3);
-
-		GameEngineIndexBufferManager::GetInst().Create("Rect", RectIndex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
-	}
-
-
-	{
-		std::vector<GameEngineVertex> RectVertex = std::vector<GameEngineVertex>(5);
-
-		{
-			// 앞면
-			RectVertex[0] = { float4({ -0.5f, 0.5f, 0.0f }),  { 0.0f, 0.0f } };
-			RectVertex[1] = { float4({ 0.5f, 0.5f, 0.0f }),  { 1.0f, 0.0f } };
-			RectVertex[2] = { float4({ 0.5f, -0.5f, 0.0f }),  { 1.0f, 1.0f } };
-			RectVertex[3] = { float4({ -0.5f, -0.5f, 0.0f }),  { 0.0f, 1.0f } };
-			RectVertex[4] = { float4({ -0.5f, 0.5f, 0.0f }),  { 0.0f, 0.0f } };
-		}
-
-		GameEngineVertexBufferManager::GetInst().Create("DebugRect", RectVertex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
-	}
-
-	{
-		std::vector<UINT> RectIndex;
-
-		RectIndex.push_back(0);
-		RectIndex.push_back(1);
-		RectIndex.push_back(2);
-		RectIndex.push_back(3);
-		RectIndex.push_back(4);
-
-		GameEngineIndexBufferManager::GetInst().Create("DebugRect", RectIndex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
-	}
-
-	{
-		std::vector<GameEngineVertex> RectVertex = std::vector<GameEngineVertex>(4);
-
-		{
-			// 앞면
-			RectVertex[0] = { float4({ -1.0f, 1.0f, 0.0f }),float4({ 0.0f, 0.0f }) };
-			RectVertex[1] = { float4({ 1.0f, 1.0f, 0.0f }), float4({ 1.0f, 0.0f }) };
-			RectVertex[2] = { float4({ 1.0f, -1.0f, 0.0f }), float4({ 1.0f, 1.0f }) };
-			RectVertex[3] = { float4({ -1.0f, -1.0f, 0.0f }),  float4({ 0.0f, 1.0f })};
-		}
-
-		GameEngineVertexBufferManager::GetInst().Create("FullRect", RectVertex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
-	}
-
-	{
-		std::vector<UINT> RectIndex;
-
-		RectIndex.push_back(0);
-		RectIndex.push_back(1);
-		RectIndex.push_back(2);
-
-		RectIndex.push_back(0);
-		RectIndex.push_back(2);
-		RectIndex.push_back(3);
-
-		GameEngineIndexBufferManager::GetInst().Create("FullRect", RectIndex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
-	}
-
-
-
-	{
-		D3D11_RASTERIZER_DESC Info = { D3D11_FILL_MODE::D3D11_FILL_SOLID, };
-		Info.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
-		Info.CullMode = D3D11_CULL_MODE::D3D11_CULL_NONE;
-		Info.AntialiasedLineEnable = true;
-		Info.MultisampleEnable = true;
-		GameEngineRasterizer* Ptr = GameEngineRasterizerManager::GetInst().Create("EngineBaseRasterizer", Info);
-		Ptr->AddWindowSizeViewPort();
-	}
+	EngineResourcesCreate_Mesh();
+	EngineResourcesCreate_Rasterizer();
 
 	{
 		D3D11_BLEND_DESC BlendInfo = { 0 };
@@ -302,7 +437,7 @@ void GameEngineCore::EngineResourcesCreate()
 
 
 	{
-		D3D11_DEPTH_STENCIL_DESC DepthInfo = {0};
+		D3D11_DEPTH_STENCIL_DESC DepthInfo = { 0 };
 
 		DepthInfo.DepthEnable = true;
 		DepthInfo.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
@@ -399,8 +534,20 @@ void GameEngineCore::EngineResourcesCreate()
 		Pipe->SetVertexShader("Color_VS");
 		Pipe->SetInputAssembler2IndexBufferSetting("Rect");
 		Pipe->SetInputAssembler2TopologySetting(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		Pipe->SetRasterizer("EngineBaseRasterizer");
+		Pipe->SetRasterizer("EngineBaseRasterizerBack");
 		Pipe->SetPixelShader("Color_PS");
+		Pipe->SetOutputMergerBlend("AlphaBlend");
+	}
+
+	{
+		GameEngineRenderingPipeLine* Pipe = GameEngineRenderingPipeLineManager::GetInst().Create("TextureAtlas");
+		Pipe->SetInputAssembler1VertexBufferSetting("Rect");
+		Pipe->SetInputAssembler1InputLayOutSetting("TextureAtlas_VS");
+		Pipe->SetVertexShader("TextureAtlas_VS");
+		Pipe->SetInputAssembler2IndexBufferSetting("Rect");
+		Pipe->SetInputAssembler2TopologySetting(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		Pipe->SetRasterizer("EngineBaseRasterizerBack");
+		Pipe->SetPixelShader("TextureAtlas_PS");
 		Pipe->SetOutputMergerBlend("AlphaBlend");
 	}
 
@@ -411,24 +558,11 @@ void GameEngineCore::EngineResourcesCreate()
 		Pipe->SetVertexShader("Texture_VS");
 		Pipe->SetInputAssembler2IndexBufferSetting("Rect");
 		Pipe->SetInputAssembler2TopologySetting(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		Pipe->SetRasterizer("EngineBaseRasterizer");
+		Pipe->SetRasterizer("EngineBaseRasterizerBack");
 		Pipe->SetPixelShader("Texture_PS");
 		Pipe->SetOutputMergerBlend("AlphaBlend");
 	}
 
-
-	{
-		GameEngineRenderingPipeLine* Pipe = GameEngineRenderingPipeLineManager::GetInst().Create("TextureUI");
-		Pipe->SetInputAssembler1VertexBufferSetting("Rect");
-		Pipe->SetInputAssembler1InputLayOutSetting("Texture_VS");
-		Pipe->SetVertexShader("Texture_VS");
-		Pipe->SetInputAssembler2IndexBufferSetting("Rect");
-		Pipe->SetInputAssembler2TopologySetting(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		Pipe->SetRasterizer("EngineBaseRasterizer");
-		Pipe->SetPixelShader("Texture_PS");
-		Pipe->SetOutputMergerBlend("AlphaBlend");
-		Pipe->SetOutputMergerDepthStencil("BaseDepthOff");
-	}
 
 	{
 		GameEngineRenderingPipeLine* Pipe = GameEngineRenderingPipeLineManager::GetInst().Create("Fade");
@@ -460,7 +594,7 @@ void GameEngineCore::EngineResourcesCreate()
 		Pipe->SetVertexShader("Texture_VS");
 		Pipe->SetInputAssembler2IndexBufferSetting("Rect");
 		Pipe->SetInputAssembler2TopologySetting(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		Pipe->SetRasterizer("EngineBaseRasterizer");
+		Pipe->SetRasterizer("EngineBaseRasterizerBack");
 		Pipe->SetPixelShader("Texture_PS");
 		Pipe->SetOutputMergerBlend("Trans");
 	}

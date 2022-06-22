@@ -4,11 +4,8 @@
 #include "Player.h"
 #include "Map.h"
 
-Map* Map::CurrentMap = nullptr;
-
 Map::Map()
 {
-	RandomStart = float4::ZERO;
 }
 
 Map::~Map()
@@ -17,33 +14,16 @@ Map::~Map()
 
 void Map::Start()
 {
+	GetTransform()->SetWorldPosition({ 0.0f, -50.0f, 0.0f });
+
 	{
-		ImageRenderer = CreateTransformComponent<GameEngineImageRenderer>();
-		ImageRenderer->GetTransform()->SetLocalPosition(float4{ 1200 * 0.5f, -720.0f * 0.5f, 100.0f });
-		ImageRenderer->GetTransform()->SetLocalScaling(float4{ 1200, 720.0f, 1.0f });
-		ImageRenderer->SetImage("Map.Png");
+		GameEngineRenderer* Renderer = CreateTransformComponent<GameEngineRenderer>(GetTransform());
+		Renderer->SetRenderingPipeLine("Color");
+		Renderer->SetMesh("Box");
+
+		Renderer->GetTransform()->SetLocalScaling({ 1000.0f, 10.0f, 1000.0f });
+		Renderer->GetTransform()->SetLocalPosition({ 0.0f, 0.0f, 0.0f });
+		Renderer->ShaderHelper.SettingConstantBufferSet("ResultColor", float4(0.0f, 0.2f, 0.0f));
 	}
-}
-
-void Map::LevelChangeStartEvent(GameEngineLevel* _PrevLevel)
-{
-	CurrentMap = this;
-}
-
-float4 Map::GetColor(GameEngineTransform* _Ptr, bool YRevers /*= true*/)
-{
-	float4 Pos = _Ptr->GetWorldPosition();
-
-	if (true == YRevers)
-	{
-		Pos.y *= -1.0f;
-	}
-
-	return GetColor(Pos);
-}
-
-float4 Map::GetColor(float4 _Postion)
-{
-	return CurrentMap->ImageRenderer->GetCurrentTexture()->GetPixel(_Postion.ix(), _Postion.iy());
 }
 

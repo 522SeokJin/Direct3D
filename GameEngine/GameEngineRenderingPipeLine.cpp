@@ -12,20 +12,21 @@ GameEngineRenderingPipeLine::GameEngineRenderingPipeLine() // default constructe
 	, Topology_(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
 {
 	SetOutputMergerBlend("AlphaBlend");
-	SetRasterizer("EngineBaseRasterizer");
+	SetRasterizer("EngineBaseRasterizerBack");
 	SetOutputMergerDepthStencil("BaseDepthOn");
 	SetInputAssembler2TopologySetting(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 GameEngineRenderingPipeLine::~GameEngineRenderingPipeLine() // default destructer 디폴트 소멸자
 {
+	// 이녀석만 레스터라이저가 달랐으면 좋겠다고 
+	// 해서 바꿀때 레스터라이저를 복사해냈으니까.
+	// 그건 내가 직접 만들게 되죠.
 	if (true == Rasterizer_->IsClone())
 	{
 		delete Rasterizer_;
 		Rasterizer_ = nullptr;
 	}
-	
-
 }
 
 GameEngineRenderingPipeLine::GameEngineRenderingPipeLine(GameEngineRenderingPipeLine&& _other) noexcept  // default RValue Copy constructer 디폴트 RValue 복사생성자
@@ -205,6 +206,20 @@ void GameEngineRenderingPipeLine::Reset()
 	DepthStencil_->Reset();
 }
 
+void GameEngineRenderingPipeLine::Copy(GameEngineRenderingPipeLine* _Value) 
+{
+	VertexBuffer_ = _Value->VertexBuffer_;
+	InputLayOutVertexShader_ = _Value->InputLayOutVertexShader_;
+	VertexShader_ = _Value->VertexShader_;
+	IndexBuffer_ = _Value->IndexBuffer_;
+	Topology_ = _Value->Topology_;
+	Rasterizer_ = _Value->Rasterizer_;
+	PixelShader_ = _Value->PixelShader_;
+	Blend_ = _Value->Blend_;
+	RenderTarget_ = _Value->RenderTarget_;
+	DepthStencil_ = _Value->DepthStencil_;
+}
+
 GameEngineRenderingPipeLine* GameEngineRenderingPipeLine::Clone()
 {
 	GameEngineRenderingPipeLine* NewClone = new GameEngineRenderingPipeLine();
@@ -222,20 +237,6 @@ GameEngineRenderingPipeLine* GameEngineRenderingPipeLine::Clone()
 	NewClone->CloneOn();
 
 	return NewClone;
-}
-
-void GameEngineRenderingPipeLine::Copy(GameEngineRenderingPipeLine* _Value)
-{
-	VertexBuffer_ = _Value->VertexBuffer_;
-	InputLayOutVertexShader_ = _Value->InputLayOutVertexShader_;
-	VertexShader_ = _Value->VertexShader_;
-	IndexBuffer_ = _Value->IndexBuffer_;
-	Topology_ = _Value->Topology_;
-	Rasterizer_ = _Value->Rasterizer_;
-	PixelShader_ = _Value->PixelShader_;
-	Blend_ = _Value->Blend_;
-	RenderTarget_ = _Value->RenderTarget_;
-	DepthStencil_ = _Value->DepthStencil_;
 }
 
 void GameEngineRenderingPipeLine::RasterizerClone()

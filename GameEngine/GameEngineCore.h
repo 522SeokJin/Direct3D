@@ -114,5 +114,8 @@ protected:
 	virtual void Release() = 0;
 	virtual float4 StartWindowSize() = 0;
 	virtual float4 StartWindowPos() = 0;
+
+	void EngineResourcesCreate_Mesh();
+	void EngineResourcesCreate_Rasterizer();
 };
 

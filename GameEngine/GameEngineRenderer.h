@@ -28,15 +28,18 @@ public:
 
 	virtual void SetRenderingPipeLineSettingNext() {}
 
+	GameEngineShaderResHelper ShaderHelper;
 	virtual void SetRenderGroup(int _Order);
 
-	inline GameEngineRenderingPipeLine* GetPipeLine()
+	inline GameEngineRenderingPipeLine* GetGameEngineRenderingPipeLine()
 	{
 		return PipeLine_;
 	}
 
-	void SetMesh(const std::string& _Value);
 	void SetMesh(const std::string& _Vtx, const std::string& _Idx);
+
+	void SetMesh(const std::string& _Value);
+
 
 protected:
 	void Start() override;
@@ -44,15 +47,10 @@ protected:
 	virtual void Render();
 
 private:
+	GameEngineRenderingPipeLine* PipeLine_;
+
 	void Update(float _DeltaTime) override;
 
-public:
-	GameEngineShaderResHelper ShaderHelper;
-
-protected:
-
-private:
-	GameEngineRenderingPipeLine* PipeLine_;
 
 };
 

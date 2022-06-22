@@ -34,7 +34,8 @@ void GameEngineUIRenderer::Start()
 {
 	// Push Render¸¦ ¸Þ
 	GetLevel()->GetUICamera()->PushRenderer(GetOrder(), this);
-	SetRenderingPipeLine("TextureUI");
+	SetRenderingPipeLine("TextureAtlas");
+	GetGameEngineRenderingPipeLine()->SetOutputMergerDepthStencil("BaseDepthOff");
 
 	if (nullptr == FontTarget_
 		&& UIRendererCount == 1)

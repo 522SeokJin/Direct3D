@@ -317,6 +317,9 @@
     <ClInclude Include="SmallPostBlur.h">
       <Filter>Object\PostProcess\EngineEffect</Filter>
     </ClInclude>
+    <ClInclude Include="SKySphereActor.h">
+      <Filter>Object\EngineActor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PreCompile.cpp">
@@ -516,6 +519,9 @@
     </ClCompile>
     <ClCompile Include="SmallPostBlur.cpp">
       <Filter>Object\PostProcess\EngineEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="SKySphereActor.cpp">
+      <Filter>Object\EngineActor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
