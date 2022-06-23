@@ -2,6 +2,7 @@
 #include "GameEngineTransformComponent.h"
 #include "GameEngineDebugRenderData.h"
 #include "Enums.h"
+#include "GameEngineLight.h"
 
 // 투영 타입
 enum class ProjectionMode
@@ -27,6 +28,7 @@ private:	// member Var
 	float						FarZ_;						// 
 
 private:
+	LightsData LightData_;
 	std::map<int, std::list<GameEngineRenderer*>> RendererList_;
 
 private:

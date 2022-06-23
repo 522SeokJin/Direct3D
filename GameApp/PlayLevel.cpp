@@ -107,7 +107,11 @@ void PlayLevel::CreateActorLevel()
 		MActor = CreateActor<MouseActor>();
 		MActor->GetUIRenderer()->SetRenderGroup(1000);
 	}
-	
+
+	{
+		CreateActor<GameEngineLight>();
+	}
+
 	{
 		Player* Actor = CreateActor<Player>();
 	}

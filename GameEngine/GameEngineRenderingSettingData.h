@@ -58,6 +58,9 @@ public:
 		: SettingData_(nullptr)
 		, Mode_(SettingMode::MAX)
 		, Res_(nullptr)
+		, SettingDataSize_()
+		, SettingIndex_()
+		, Shader(nullptr)
 	{
 
 	}
@@ -92,6 +95,8 @@ public:
 public:
 	GameEngineSamplerSetting()
 		: Res_(nullptr)
+		, SettingIndex_()
+		, Shader(nullptr)
 	{
 
 	}
@@ -124,6 +129,8 @@ public:
 public:
 	GameEngineTextureSetting()
 		: Res_(nullptr)
+		, SettingIndex_()
+		, Shader(nullptr)
 	{
 
 	}

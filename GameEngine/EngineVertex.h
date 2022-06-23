@@ -1,19 +1,35 @@
 #pragma once
 #include <GameEngineBase/GameEngineMath.h>
 
+class GameEngineLayOut
+{
+public:
+	unsigned int LayOutOffset_;
+	std::vector<std::string> SemanticName_;
+	std::vector<D3D11_INPUT_ELEMENT_DESC> InputLayoutDesc_;
+
+	void AddInputLayOut(
+		const char* _SemanticName,
+		unsigned int _Index,
+		unsigned int _AlignedByteOffset,
+		DXGI_FORMAT _Format,
+		unsigned int _InputSlot,
+		unsigned int _InstanceDataStepRate,
+		D3D11_INPUT_CLASSIFICATION _inputClass
+	);
+
+	ID3D11InputLayout* CreateLayOut(GameEngineShader* _Shader);
+};
 
 struct GameEngineVertex
 {
+	static GameEngineLayOut LayOut;
+
 public:
-	float4 Postion;
-	float4 Texcoord;
-	float4 Color;
-
-	// 회전행렬을 만들어 낼수 있다.
-	// 빛만연산할거면 이것만
-	float4 Normal; // y
-
-	// 노말맵 혹은 범프연산을 할때는 보통 아래까지 필요하다.
-	float4 Tangent; // z
-	float4 BiNormal; // x
+	float4 POSITION;
+	float4 TEXTURECOORD;
+	float4 COLOR;
+	float4 NORMAL;
+	float4 TANGENT;
+	float4 BINORMAL;
 };

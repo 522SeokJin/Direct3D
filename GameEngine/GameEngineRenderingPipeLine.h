@@ -23,7 +23,8 @@ private:	// member Var
 	// IA1
 	GameEngineVertexBuffer* VertexBuffer_;
 	// IA1
-	GameEngineVertexShader* InputLayOutVertexShader_;
+	//GameEngineVertexShader* InputLayOutVertexShader_;
+	ID3D11InputLayout* LayOut_;
 	// VS
 	GameEngineVertexShader* VertexShader_;
 	// IA2
@@ -58,7 +59,7 @@ public:
 		return VertexShader_;
 	}
 
-	void SetInputAssembler1InputLayOutSetting(const std::string& _Name);
+	//void SetInputAssembler1InputLayOutSetting(const std::string& _Name);
 
 	void SetInputAssembler1VertexBufferSetting(const std::string& _Name);
 
@@ -109,5 +110,7 @@ private:		//delete operator
 	void Rasterizer();
 	void PixelShader();
 	void OutPutMerger();
+
+	void CreateLayOut();
 };
 

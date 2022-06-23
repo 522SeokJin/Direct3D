@@ -6,7 +6,7 @@
 
 GameEngineRenderingPipeLine::GameEngineRenderingPipeLine() // default constructer 디폴트 생성자
 	: VertexBuffer_(nullptr)
-	, InputLayOutVertexShader_(nullptr)
+	//, InputLayOutVertexShader_(nullptr)
 	, VertexShader_(nullptr)
 	, IndexBuffer_(nullptr)
 	, Topology_(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
@@ -19,6 +19,12 @@ GameEngineRenderingPipeLine::GameEngineRenderingPipeLine() // default constructe
 
 GameEngineRenderingPipeLine::~GameEngineRenderingPipeLine() // default destructer 디폴트 소멸자
 {
+	if (nullptr != LayOut_)
+	{
+		LayOut_->Release();
+		LayOut_ = nullptr;
+	}
+
 	// 이녀석만 레스터라이저가 달랐으면 좋겠다고 
 	// 해서 바꿀때 레스터라이저를 복사해냈으니까.
 	// 그건 내가 직접 만들게 되죠.
@@ -47,20 +53,24 @@ void GameEngineRenderingPipeLine::SetInputAssembler1VertexBufferSetting(const st
 		return;
 	}
 
-}
-
-void GameEngineRenderingPipeLine::SetInputAssembler1InputLayOutSetting(const std::string& _Name) 
-{
-	InputLayOutVertexShader_ = GameEngineVertexShaderManager::GetInst().Find(_Name);
-
-	if (nullptr == InputLayOutVertexShader_)
+	if (nullptr != VertexShader_)
 	{
-		GameEngineDebug::MsgBoxError("존재하지 않는 버텍스 버퍼를 세팅하려고 했습니다.");
-		return;
+		CreateLayOut();
 	}
 }
 
-void GameEngineRenderingPipeLine::SetInputAssembler2IndexBufferSetting(const std::string& _Name) 
+//void GameEngineRenderingPipeLine::SetInputAssembler1InputLayOutSetting(const std::string& _Name) 
+//{
+//	InputLayOutVertexShader_ = GameEngineVertexShaderManager::GetInst().Find(_Name);
+//
+//	if (nullptr == InputLayOutVertexShader_)
+//	{
+//		GameEngineDebug::MsgBoxError("존재하지 않는 버텍스 버퍼를 세팅하려고 했습니다.");
+//		return;
+//	}
+//}
+
+void GameEngineRenderingPipeLine::SetInputAssembler2IndexBufferSetting(const std::string& _Name)
 {
 	IndexBuffer_ = GameEngineIndexBufferManager::GetInst().Find(_Name);
 
@@ -71,7 +81,7 @@ void GameEngineRenderingPipeLine::SetInputAssembler2IndexBufferSetting(const std
 	}
 }
 
-void GameEngineRenderingPipeLine::SetInputAssembler2TopologySetting(D3D11_PRIMITIVE_TOPOLOGY _Topology) 
+void GameEngineRenderingPipeLine::SetInputAssembler2TopologySetting(D3D11_PRIMITIVE_TOPOLOGY _Topology)
 {
 	Topology_ = _Topology;
 }
@@ -86,9 +96,46 @@ void GameEngineRenderingPipeLine::SetVertexShader(const std::string& _Name)
 		GameEngineDebug::MsgBoxError("존재하지 않는 버텍스 쉐이더를 세팅하려고 했습니다.");
 		return;
 	}
+
+	if (nullptr != VertexBuffer_)
+	{
+		CreateLayOut();
+	}
 }
 
-void GameEngineRenderingPipeLine::SetRasterizer(const std::string& _Name) 
+// 버텍스버퍼와 버텍스 쉐이더가 둘다 세팅되었을때만 호출될겁니다.
+void GameEngineRenderingPipeLine::CreateLayOut()
+{
+	if (nullptr != LayOut_)
+	{
+		LayOut_->Release();
+		LayOut_ = nullptr;
+	}
+
+	if (nullptr == VertexBuffer_->InputLayoutDesc_)
+	{
+		GameEngineDebug::MsgBoxError("인풋 레이아웃 정보가 없습니다.");
+	}
+
+	std::vector<D3D11_INPUT_ELEMENT_DESC>& InputLayoutDesc_ = *VertexBuffer_->InputLayoutDesc_;
+
+	if (
+		S_OK != GameEngineDevice::GetInst().GetDevice()->CreateInputLayout
+		(
+			&InputLayoutDesc_[0],
+			static_cast<unsigned int>(InputLayoutDesc_.size()),
+			VertexShader_->CodeBlob_->GetBufferPointer(),
+			VertexShader_->CodeBlob_->GetBufferSize(),
+			&LayOut_
+		)
+		)
+	{
+		GameEngineDebug::MsgBoxError("인풋레이아웃 생성에 실패했습니다.");
+		return;
+	}
+}
+
+void GameEngineRenderingPipeLine::SetRasterizer(const std::string& _Name)
 {
 	Rasterizer_ = GameEngineRasterizerManager::GetInst().Find(_Name);
 
@@ -99,7 +146,7 @@ void GameEngineRenderingPipeLine::SetRasterizer(const std::string& _Name)
 	}
 }
 
-void GameEngineRenderingPipeLine::SetPixelShader(const std::string& _Name) 
+void GameEngineRenderingPipeLine::SetPixelShader(const std::string& _Name)
 {
 	PixelShader_ = GameEnginePixelShaderManager::GetInst().Find(_Name);
 
@@ -122,7 +169,7 @@ void GameEngineRenderingPipeLine::SetOutputMergerBlend(const std::string& _Name)
 
 }
 
-void GameEngineRenderingPipeLine::SetOutputMergerDepthStencil(const std::string& _Name) 
+void GameEngineRenderingPipeLine::SetOutputMergerDepthStencil(const std::string& _Name)
 {
 	DepthStencil_ = GameEngineDepthStencilManager::GetInst().Find(_Name);
 	if (nullptr == DepthStencil_)
@@ -132,19 +179,25 @@ void GameEngineRenderingPipeLine::SetOutputMergerDepthStencil(const std::string&
 	}
 }
 
-void GameEngineRenderingPipeLine::InputAssembler1() 
+void GameEngineRenderingPipeLine::InputAssembler1()
 {
 	VertexBuffer_->Setting();
-	InputLayOutVertexShader_->InputLayOutSetting();
+
+	if (nullptr != LayOut_)
+	{
+		GameEngineDevice::GetInst().GetContext()->IASetInputLayout(LayOut_);
+	}
+
+	//InputLayOutVertexShader_->InputLayOutSetting();
 }
 
-void GameEngineRenderingPipeLine::InputAssembler2() 
+void GameEngineRenderingPipeLine::InputAssembler2()
 {
 	IndexBuffer_->Setting();
 	GameEngineDevice::GetContext()->IASetPrimitiveTopology(Topology_);
 }
 
-void GameEngineRenderingPipeLine::VertexShader() 
+void GameEngineRenderingPipeLine::VertexShader()
 {
 	VertexShader_->Setting();
 }
@@ -161,13 +214,13 @@ void GameEngineRenderingPipeLine::PixelShader()
 	PixelShader_->Setting();
 }
 
-void GameEngineRenderingPipeLine::OutPutMerger() 
+void GameEngineRenderingPipeLine::OutPutMerger()
 {
 	Blend_->Setting();
 	DepthStencil_->Setting();
 }
 
-void GameEngineRenderingPipeLine::RenderingPipeLineSetting() 
+void GameEngineRenderingPipeLine::RenderingPipeLineSetting()
 {
 	// input어셈블러 단계
 	InputAssembler1();
@@ -183,14 +236,14 @@ void GameEngineRenderingPipeLine::RenderingPipeLineSetting()
 	OutPutMerger();
 }
 
-void GameEngineRenderingPipeLine::Rendering() 
+void GameEngineRenderingPipeLine::Rendering()
 {
 	RenderingPipeLineSetting();
 
 	GameEngineDevice::GetContext()->DrawIndexed(IndexBuffer_->GetIndexCount(), 0, 0);
 }
 
-void GameEngineRenderingPipeLine::InstanceRendering() 
+void GameEngineRenderingPipeLine::InstanceRendering()
 {
 	// 같은 매쉬를 쓰고
 	// 같은 랜더링 파이프라인을 사용할건데.
@@ -200,16 +253,16 @@ void GameEngineRenderingPipeLine::InstanceRendering()
 	// GameEngineDevice::GetContext()->DrawIndexedInstanced(IndexBuffer_->GetIndexCount(), 0, 0);
 }
 
-void GameEngineRenderingPipeLine::Reset() 
+void GameEngineRenderingPipeLine::Reset()
 {
 	Blend_->Reset();
 	DepthStencil_->Reset();
 }
 
-void GameEngineRenderingPipeLine::Copy(GameEngineRenderingPipeLine* _Value) 
+void GameEngineRenderingPipeLine::Copy(GameEngineRenderingPipeLine* _Value)
 {
 	VertexBuffer_ = _Value->VertexBuffer_;
-	InputLayOutVertexShader_ = _Value->InputLayOutVertexShader_;
+	//InputLayOutVertexShader_ = _Value->InputLayOutVertexShader_;
 	VertexShader_ = _Value->VertexShader_;
 	IndexBuffer_ = _Value->IndexBuffer_;
 	Topology_ = _Value->Topology_;
@@ -224,16 +277,16 @@ GameEngineRenderingPipeLine* GameEngineRenderingPipeLine::Clone()
 {
 	GameEngineRenderingPipeLine* NewClone = new GameEngineRenderingPipeLine();
 
-	NewClone->VertexBuffer_			= VertexBuffer_;
-	NewClone->InputLayOutVertexShader_	= InputLayOutVertexShader_;
-	NewClone->VertexShader_			= VertexShader_;
-	NewClone->IndexBuffer_				= IndexBuffer_;
-	NewClone->Topology_				= Topology_;
-	NewClone->Rasterizer_				= Rasterizer_;
-	NewClone->PixelShader_				= PixelShader_;
-	NewClone->Blend_					= Blend_;
-	NewClone->RenderTarget_			= RenderTarget_;
-	NewClone->DepthStencil_			= DepthStencil_;
+	NewClone->VertexBuffer_ = VertexBuffer_;
+	//NewClone->InputLayOutVertexShader_	= InputLayOutVertexShader_;
+	NewClone->VertexShader_ = VertexShader_;
+	NewClone->IndexBuffer_ = IndexBuffer_;
+	NewClone->Topology_ = Topology_;
+	NewClone->Rasterizer_ = Rasterizer_;
+	NewClone->PixelShader_ = PixelShader_;
+	NewClone->Blend_ = Blend_;
+	NewClone->RenderTarget_ = RenderTarget_;
+	NewClone->DepthStencil_ = DepthStencil_;
 	NewClone->CloneOn();
 
 	return NewClone;

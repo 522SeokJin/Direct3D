@@ -22,6 +22,7 @@ class GameEngineTextureSetting;
 class GameEngineConstantBufferSetting;
 class GameEngineShader : public GameEngineObjectNameBase 
 {
+	friend class GameEngineLayOut;
 public:
 	// constrcuter destructer
 	GameEngineShader(ShaderType _Type);

@@ -10,6 +10,7 @@
 // Ό³Έν : 
 class GameEngineVertexShader : public GameEngineShader
 {
+	friend class  GameEngineRenderingPipeLine;
 private:	// member Var
 	ID3D11VertexShader* Shader_;
 
@@ -58,15 +59,7 @@ public:
 
 	void ReSetSampler(const GameEngineSamplerSetting* _Setting) override;
 
-/// <summary>
-/// ////////////////////////////// InputLayOutSettting
-/// </summary>
-
-private:
-	ID3D11InputLayout* LayOut_;
-	unsigned int LayOutOffset_;
-	std::vector<std::string> SemanticName_;
-	std::vector<D3D11_INPUT_ELEMENT_DESC> InputLayoutDesc_;
+	void LayOutReset();
 
 	void AddInputLayOut(
 		const char* _SemanticName,
@@ -77,7 +70,18 @@ private:
 		unsigned int _InstanceDataStepRate,
 		D3D11_INPUT_CLASSIFICATION _inputClass
 	);
+
 	void CreateLayOut();
+
+	/// <summary>
+	/// ////////////////////////////// InputLayOutSettting
+	/// </summary>
+
+private:
+	ID3D11InputLayout* LayOut_;
+	unsigned int LayOutOffset_;
+	std::vector<std::string> SemanticName_;
+	std::vector<D3D11_INPUT_ELEMENT_DESC> InputLayoutDesc_;
 
 	void LayOutCheck();
 

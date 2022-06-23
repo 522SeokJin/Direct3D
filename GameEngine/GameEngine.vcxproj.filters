@@ -43,9 +43,6 @@
     <Filter Include="Object\Component\Transform">
       <UniqueIdentifier>{c2b3387d-aae4-46dc-8bca-04e0dfc36d56}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\Component\Renderer">
-      <UniqueIdentifier>{1af1c7d5-451d-40d3-a014-0b672f4a580f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Object\Component\Camera">
       <UniqueIdentifier>{ac8b346f-88f3-4590-b4f4-967975a716c9}</UniqueIdentifier>
     </Filter>
@@ -54,9 +51,6 @@
     </Filter>
     <Filter Include="Object\EngineActor">
       <UniqueIdentifier>{cedee5b8-6818-465e-99ec-66b1b1a2ad9b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Object\Component\Renderer\Sub">
-      <UniqueIdentifier>{0771a093-80e1-40de-8e54-069db34a9478}</UniqueIdentifier>
     </Filter>
     <Filter Include="Lib">
       <UniqueIdentifier>{2866442e-9588-498b-b790-d7599eed826c}</UniqueIdentifier>
@@ -102,6 +96,12 @@
     </Filter>
     <Filter Include="Object\PostProcess\EngineEffect">
       <UniqueIdentifier>{2d63233e-75a8-442c-bdde-41d8d1d2287a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Component\Render">
+      <UniqueIdentifier>{1af1c7d5-451d-40d3-a014-0b672f4a580f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Component\Render\Sub">
+      <UniqueIdentifier>{0771a093-80e1-40de-8e54-069db34a9478}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -195,7 +195,7 @@
       <Filter>Object\Component</Filter>
     </ClInclude>
     <ClInclude Include="GameEngineRenderer.h">
-      <Filter>Object\Component\Renderer</Filter>
+      <Filter>Object\Component\Render</Filter>
     </ClInclude>
     <ClInclude Include="CameraComponent.h">
       <Filter>Object\Component\Camera</Filter>
@@ -207,10 +207,10 @@
       <Filter>Control</Filter>
     </ClInclude>
     <ClInclude Include="GameEngineUIRenderer.h">
-      <Filter>Object\Component\Renderer</Filter>
+      <Filter>Object\Component\Render</Filter>
     </ClInclude>
     <ClInclude Include="GameEngineImageRenderer.h">
-      <Filter>Object\Component\Renderer\Sub</Filter>
+      <Filter>Object\Component\Render\Sub</Filter>
     </ClInclude>
     <ClInclude Include="GameEngineSampler.h">
       <Filter>Resources\02Image</Filter>
@@ -320,6 +320,9 @@
     <ClInclude Include="SKySphereActor.h">
       <Filter>Object\EngineActor</Filter>
     </ClInclude>
+    <ClInclude Include="GameEngineLight.h">
+      <Filter>Object\Component\Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PreCompile.cpp">
@@ -412,7 +415,7 @@
       <Filter>Object\Component</Filter>
     </ClCompile>
     <ClCompile Include="GameEngineRenderer.cpp">
-      <Filter>Object\Component\Renderer</Filter>
+      <Filter>Object\Component\Render</Filter>
     </ClCompile>
     <ClCompile Include="CameraComponent.cpp">
       <Filter>Object\Component\Camera</Filter>
@@ -424,10 +427,10 @@
       <Filter>Control</Filter>
     </ClCompile>
     <ClCompile Include="GameEngineUIRenderer.cpp">
-      <Filter>Object\Component\Renderer</Filter>
+      <Filter>Object\Component\Render</Filter>
     </ClCompile>
     <ClCompile Include="GameEngineImageRenderer.cpp">
-      <Filter>Object\Component\Renderer\Sub</Filter>
+      <Filter>Object\Component\Render\Sub</Filter>
     </ClCompile>
     <ClCompile Include="GameEngineSampler.cpp">
       <Filter>Resources\02Image</Filter>
@@ -522,6 +525,12 @@
     </ClCompile>
     <ClCompile Include="SKySphereActor.cpp">
       <Filter>Object\EngineActor</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineLight.cpp">
+      <Filter>Object\Component\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineVertex.cpp">
+      <Filter>Global</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

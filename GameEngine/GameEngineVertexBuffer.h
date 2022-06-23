@@ -36,16 +36,23 @@ private:		//delete operator
 	GameEngineVertexBuffer& operator=(const GameEngineVertexBuffer& _other) = delete; // default Copy operator 디폴트 대입 연산자
 	GameEngineVertexBuffer& operator=(const GameEngineVertexBuffer&& _other) = delete; // default RValue Copy operator 디폴트 RValue 대입연산자
 
+	void Create(const void* _Data, size_t _Datas, size_t _Count, D3D11_USAGE _Usage);
+
 public:
 	template<typename VertexType>
 	void Create(const std::vector<VertexType>& _Datas, D3D11_USAGE _Usage)
 	{
+		InputLayoutDesc_ = &(VertexType::LayOut.InputLayoutDesc_);
+
 		Create(reinterpret_cast<const void*>(&_Datas[0]), sizeof(VertexType), _Datas.size(), _Usage);
 	}
 
-	void Create(const void* _Data, size_t _Datas, size_t _Count, D3D11_USAGE _Usage);
 
 	void Setting();
+
+public:
+	std::vector<D3D11_INPUT_ELEMENT_DESC>* InputLayoutDesc_;
+
 };
 
 

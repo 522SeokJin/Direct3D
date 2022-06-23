@@ -4,12 +4,14 @@ struct VertexIn
 {
     float4 Position : POSITION;
     float4 Texcoord : TEXTURECOORD;
+    float4 Normal : NORMAL;
 };
 
 struct VertexOut
 {
     float4 Position : SV_POSITION;
     float4 Texcoord : TEXTURECOORD;
+    float4 Normal : NORMAL;
 };
 
 VertexOut Texture_VS(VertexIn _in) 

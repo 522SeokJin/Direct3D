@@ -12,6 +12,21 @@
 
 void GameEngineCore::EngineResourcesCreate_Mesh()
 {
+	// GameEngineVertexShader* Ptr = GameEngineVertexShaderManager::GetInst().Find("Texture_VS");
+// Ptr->LayOutReset();
+// Ptr->AddInputLayOut("POSITION", 0, 16, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA);
+// Ptr->AddInputLayOut("TEXTURECOORD", 0, 16, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA);
+// Ptr->AddInputLayOut("COLOR", 0, 16, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA);
+// Ptr->AddInputLayOut("NORMAL", 0, 16, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA);
+// Ptr->CreateLayOut();
+
+	GameEngineVertex::LayOut.AddInputLayOut("POSITION", 0, 16, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA);
+	GameEngineVertex::LayOut.AddInputLayOut("TEXTURECOORD", 0, 16, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA);
+	GameEngineVertex::LayOut.AddInputLayOut("COLOR", 0, 16, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA);
+	GameEngineVertex::LayOut.AddInputLayOut("NORMAL", 0, 16, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA);
+	GameEngineVertex::LayOut.AddInputLayOut("TANGENT", 0, 16, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA);
+	GameEngineVertex::LayOut.AddInputLayOut("BINORMAL", 0, 16, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA);
+
 	// Sphere
 		// 스피어
 	{
@@ -21,16 +36,16 @@ void GameEngineCore::EngineResourcesCreate_Mesh()
 
 		float Radius = 0.5f;
 		// 북극점부터 시작합니다.
-		V.Postion = float4(0.0f, Radius, 0.0f, 1.0f);
-		V.Texcoord = float4(0.5f, 0.0f);
+		V.POSITION = float4(0.0f, Radius, 0.0f, 1.0f);
+		V.TEXTURECOORD = float4(0.5f, 0.0f);
 		// 노말 백터 혹은 법선백터라고 불리며
 		// 면에 수직인 벡터를 의미하게 된다.
 		// 빛을 반사할때 필수.
-		V.Normal = float4(0.0f, Radius, 0.0f, 1.0f);
-		V.Normal.Normalize3D();
-		V.Normal.w = 0.0f;
-		V.Tangent = float4(1.0f, 0.0f, 0.0f, 0.0f);
-		V.BiNormal = float4(0.0f, 0.0f, 1.0f, 0.0f);
+		V.NORMAL = float4(0.0f, Radius, 0.0f, 1.0f);
+		V.NORMAL.Normalize3D();
+		V.NORMAL.w = 0.0f;
+		V.TANGENT = float4(1.0f, 0.0f, 0.0f, 0.0f);
+		V.BINORMAL = float4(0.0f, 0.0f, 1.0f, 0.0f);
 
 		VBVector.push_back(V);
 
@@ -51,7 +66,7 @@ void GameEngineCore::EngineResourcesCreate_Mesh()
 			for (UINT z = 0; z < iSliceCount + 1; ++z)
 			{
 				float theta = z * zRotAngle;
-				V.Postion = float4{
+				V.POSITION = float4{
 					Radius * sinf(y * yRotAngle) * cosf(z * zRotAngle),
 					Radius * cosf(y * yRotAngle),
 					Radius * sinf(y * yRotAngle) * sinf(z * zRotAngle),
@@ -60,32 +75,32 @@ void GameEngineCore::EngineResourcesCreate_Mesh()
 
 				// V.Pos *= GameEngineRandom::RandomFloat(-0.9f, 0.1f);
 
-				V.Texcoord = float4(yUvRatio * z, zUvRatio * y);
-				V.Normal = V.Postion.NormalizeReturn3D();
-				V.Normal.w = 0.0f;
+				V.TEXTURECOORD = float4(yUvRatio * z, zUvRatio * y);
+				V.NORMAL = V.POSITION.NormalizeReturn3D();
+				V.NORMAL.w = 0.0f;
 
-				V.Tangent.x = -Radius * sinf(phi) * sinf(theta);
-				V.Tangent.y = 0.0f;
-				V.Tangent.z = Radius * sinf(phi) * cosf(theta);
-				V.Tangent = V.Tangent.NormalizeReturn3D();
-				V.Tangent.w = 0.0f;
+				V.TANGENT.x = -Radius * sinf(phi) * sinf(theta);
+				V.TANGENT.y = 0.0f;
+				V.TANGENT.z = Radius * sinf(phi) * cosf(theta);
+				V.TANGENT = V.TANGENT.NormalizeReturn3D();
+				V.TANGENT.w = 0.0f;
 
-				V.BiNormal = float4::Cross3D(V.Tangent, V.Normal);
-				V.BiNormal = V.BiNormal.NormalizeReturn3D();
-				V.BiNormal.w = 0.0f;
+				V.BINORMAL = float4::Cross3D(V.TANGENT, V.NORMAL);
+				V.BINORMAL = V.BINORMAL.NormalizeReturn3D();
+				V.BINORMAL.w = 0.0f;
 
 				VBVector.push_back(V);
 			}
 		}
 
 		// 남극점
-		V.Postion = float4(0.0f, -Radius, 0.0f, 1.0f);
-		V.Texcoord = float4(0.5f, 1.0f);
-		V.Normal = float4(0.0f, -Radius, 0.0f, 1.0f);
-		V.Normal.Normalize3D();
-		V.Normal.w = 0.0f;
-		V.Tangent = float4(-1.0f, 0.0f, 0.0f, 0.0f);
-		V.BiNormal = float4(0.0f, 0.0f, -1.0f, 0.0f);
+		V.POSITION = float4(0.0f, -Radius, 0.0f, 1.0f);
+		V.TEXTURECOORD = float4(0.5f, 1.0f);
+		V.NORMAL = float4(0.0f, -Radius, 0.0f, 1.0f);
+		V.NORMAL.Normalize3D();
+		V.NORMAL.w = 0.0f;
+		V.TANGENT = float4(-1.0f, 0.0f, 0.0f, 0.0f);
+		V.BINORMAL = float4(0.0f, 0.0f, -1.0f, 0.0f);
 		VBVector.push_back(V);
 
 		// 인덱스 버퍼를 만듭니다.
@@ -140,42 +155,42 @@ void GameEngineCore::EngineResourcesCreate_Mesh()
 			Vertex[2] = { float4({ 0.5f, -0.5f, 0.5f }) };
 			Vertex[3] = { float4({ -0.5f, -0.5f, 0.5f }) };
 
-			Vertex[4] = { float4::RotateXDegree(Vertex[0].Postion, 180.0f) };
-			Vertex[5] = { float4::RotateXDegree(Vertex[1].Postion, 180.0f) };
-			Vertex[6] = { float4::RotateXDegree(Vertex[2].Postion, 180.0f) };
-			Vertex[7] = { float4::RotateXDegree(Vertex[3].Postion, 180.0f) };
+			Vertex[4] = { float4::RotateXDegree(Vertex[0].POSITION, 180.0f) };
+			Vertex[5] = { float4::RotateXDegree(Vertex[1].POSITION, 180.0f) };
+			Vertex[6] = { float4::RotateXDegree(Vertex[2].POSITION, 180.0f) };
+			Vertex[7] = { float4::RotateXDegree(Vertex[3].POSITION, 180.0f) };
 		}
 
 		{
-			Vertex[8] = { float4::RotateYDegree(Vertex[0].Postion, 90.0f) };
-			Vertex[9] = { float4::RotateYDegree(Vertex[1].Postion, 90.0f) };
-			Vertex[10] = { float4::RotateYDegree(Vertex[2].Postion, 90.0f) };
-			Vertex[11] = { float4::RotateYDegree(Vertex[3].Postion, 90.0f) };
+			Vertex[8] = { float4::RotateYDegree(Vertex[0].POSITION, 90.0f) };
+			Vertex[9] = { float4::RotateYDegree(Vertex[1].POSITION, 90.0f) };
+			Vertex[10] = { float4::RotateYDegree(Vertex[2].POSITION, 90.0f) };
+			Vertex[11] = { float4::RotateYDegree(Vertex[3].POSITION, 90.0f) };
 
-			Vertex[12] = { float4::RotateYDegree(Vertex[0].Postion, -90.0f) };
-			Vertex[13] = { float4::RotateYDegree(Vertex[1].Postion, -90.0f) };
-			Vertex[14] = { float4::RotateYDegree(Vertex[2].Postion, -90.0f) };
-			Vertex[15] = { float4::RotateYDegree(Vertex[3].Postion, -90.0f) };
+			Vertex[12] = { float4::RotateYDegree(Vertex[0].POSITION, -90.0f) };
+			Vertex[13] = { float4::RotateYDegree(Vertex[1].POSITION, -90.0f) };
+			Vertex[14] = { float4::RotateYDegree(Vertex[2].POSITION, -90.0f) };
+			Vertex[15] = { float4::RotateYDegree(Vertex[3].POSITION, -90.0f) };
 		}
 
 		{
-			Vertex[16] = { float4::RotateXDegree(Vertex[0].Postion, 90.0f) };
-			Vertex[17] = { float4::RotateXDegree(Vertex[1].Postion, 90.0f) };
-			Vertex[18] = { float4::RotateXDegree(Vertex[2].Postion, 90.0f) };
-			Vertex[19] = { float4::RotateXDegree(Vertex[3].Postion, 90.0f) };
+			Vertex[16] = { float4::RotateXDegree(Vertex[0].POSITION, 90.0f) };
+			Vertex[17] = { float4::RotateXDegree(Vertex[1].POSITION, 90.0f) };
+			Vertex[18] = { float4::RotateXDegree(Vertex[2].POSITION, 90.0f) };
+			Vertex[19] = { float4::RotateXDegree(Vertex[3].POSITION, 90.0f) };
 
-			Vertex[20] = { float4::RotateXDegree(Vertex[0].Postion, -90.0f) };
-			Vertex[21] = { float4::RotateXDegree(Vertex[1].Postion, -90.0f) };
-			Vertex[22] = { float4::RotateXDegree(Vertex[2].Postion, -90.0f) };
-			Vertex[23] = { float4::RotateXDegree(Vertex[3].Postion, -90.0f) };
+			Vertex[20] = { float4::RotateXDegree(Vertex[0].POSITION, -90.0f) };
+			Vertex[21] = { float4::RotateXDegree(Vertex[1].POSITION, -90.0f) };
+			Vertex[22] = { float4::RotateXDegree(Vertex[2].POSITION, -90.0f) };
+			Vertex[23] = { float4::RotateXDegree(Vertex[3].POSITION, -90.0f) };
 		}
 
 		for (size_t i = 0; i < Vertex.size(); i += 4)
 		{
-			Vertex[i + 0].Texcoord = { 0.0f, 0.0f };
-			Vertex[i + 1].Texcoord = { 1.0f, 0.0f };
-			Vertex[i + 2].Texcoord = { 1.0f, 1.0f };
-			Vertex[i + 3].Texcoord = { 0.0f, 1.0f };
+			Vertex[i + 0].TEXTURECOORD = { 0.0f, 0.0f };
+			Vertex[i + 1].TEXTURECOORD = { 1.0f, 0.0f };
+			Vertex[i + 2].TEXTURECOORD = { 1.0f, 1.0f };
+			Vertex[i + 3].TEXTURECOORD = { 0.0f, 1.0f };
 		}
 
 		GameEngineVertexBufferManager::GetInst().Create("Box", Vertex, D3D11_USAGE::D3D11_USAGE_DEFAULT);
@@ -392,6 +407,15 @@ void GameEngineCore::EngineResourcesLoad()
 			}
 
 		}
+
+		// GameEngineVertexShader* Ptr = GameEngineVertexShaderManager::GetInst().Find("Texture_VS");
+		// Ptr->LayOutReset();
+		// Ptr->AddInputLayOut("POSITION", 0, 16, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA);
+		// Ptr->AddInputLayOut("TEXTURECOORD", 0, 16, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA);
+		// Ptr->AddInputLayOut("COLOR", 0, 16, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA);
+		// Ptr->AddInputLayOut("NORMAL", 0, 16, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA);
+		// Ptr->CreateLayOut();
+
 	}
 
 	GameEngineSampler* NewRes = GameEngineSamplerManager::GetInst().Find("PointSmp");
@@ -511,7 +535,6 @@ void GameEngineCore::EngineResourcesCreate()
 	{
 		GameEngineRenderingPipeLine* Pipe = GameEngineRenderingPipeLineManager::GetInst().Create("DebugRect");
 		Pipe->SetInputAssembler1VertexBufferSetting("DebugRect");
-		Pipe->SetInputAssembler1InputLayOutSetting("Color_VS");
 		Pipe->SetVertexShader("Color_VS");
 		Pipe->SetInputAssembler2IndexBufferSetting("DebugRect");
 		Pipe->SetInputAssembler2TopologySetting(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
@@ -522,7 +545,6 @@ void GameEngineCore::EngineResourcesCreate()
 		GameEngineRenderingPipeLine* Pipe = GameEngineRenderingPipeLineManager::GetInst().Create("TargetMerge");
 		Pipe->SetInputAssembler1VertexBufferSetting("FullRect");
 		Pipe->SetInputAssembler2IndexBufferSetting("FullRect");
-		Pipe->SetInputAssembler1InputLayOutSetting("TargetMerge_VS");
 		Pipe->SetVertexShader("TargetMerge_VS");
 		Pipe->SetPixelShader("TargetMerge_PS");
 		Pipe->SetOutputMergerDepthStencil("BaseDepthOff");
@@ -532,7 +554,6 @@ void GameEngineCore::EngineResourcesCreate()
 	{
 		GameEngineRenderingPipeLine* Pipe = GameEngineRenderingPipeLineManager::GetInst().Create("Color");
 		Pipe->SetInputAssembler1VertexBufferSetting("Rect");
-		Pipe->SetInputAssembler1InputLayOutSetting("Color_VS");
 		Pipe->SetVertexShader("Color_VS");
 		Pipe->SetInputAssembler2IndexBufferSetting("Rect");
 		Pipe->SetInputAssembler2TopologySetting(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -544,7 +565,6 @@ void GameEngineCore::EngineResourcesCreate()
 	{
 		GameEngineRenderingPipeLine* Pipe = GameEngineRenderingPipeLineManager::GetInst().Create("TextureAtlas");
 		Pipe->SetInputAssembler1VertexBufferSetting("Rect");
-		Pipe->SetInputAssembler1InputLayOutSetting("TextureAtlas_VS");
 		Pipe->SetVertexShader("TextureAtlas_VS");
 		Pipe->SetInputAssembler2IndexBufferSetting("Rect");
 		Pipe->SetInputAssembler2TopologySetting(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -556,7 +576,6 @@ void GameEngineCore::EngineResourcesCreate()
 	{
 		GameEngineRenderingPipeLine* Pipe = GameEngineRenderingPipeLineManager::GetInst().Create("Texture");
 		Pipe->SetInputAssembler1VertexBufferSetting("Rect");
-		Pipe->SetInputAssembler1InputLayOutSetting("Texture_VS");
 		Pipe->SetVertexShader("Texture_VS");
 		Pipe->SetInputAssembler2IndexBufferSetting("Rect");
 		Pipe->SetInputAssembler2TopologySetting(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -570,7 +589,6 @@ void GameEngineCore::EngineResourcesCreate()
 		GameEngineRenderingPipeLine* Pipe = GameEngineRenderingPipeLineManager::GetInst().Create("Fade");
 		Pipe->SetInputAssembler1VertexBufferSetting("FullRect");
 		Pipe->SetInputAssembler2IndexBufferSetting("FullRect");
-		Pipe->SetInputAssembler1InputLayOutSetting("Fade_VS");
 		Pipe->SetVertexShader("Fade_VS");
 		Pipe->SetPixelShader("Fade_PS");
 		Pipe->SetOutputMergerDepthStencil("BaseDepthOff");
@@ -582,7 +600,6 @@ void GameEngineCore::EngineResourcesCreate()
 		GameEngineRenderingPipeLine* Pipe = GameEngineRenderingPipeLineManager::GetInst().Create("Blur");
 		Pipe->SetInputAssembler1VertexBufferSetting("FullRect");
 		Pipe->SetInputAssembler2IndexBufferSetting("FullRect");
-		Pipe->SetInputAssembler1InputLayOutSetting("Blur_VS");
 		Pipe->SetVertexShader("Blur_VS");
 		Pipe->SetPixelShader("Blur_PS");
 		Pipe->SetOutputMergerDepthStencil("BaseDepthOff");
@@ -592,7 +609,6 @@ void GameEngineCore::EngineResourcesCreate()
 	{
 		GameEngineRenderingPipeLine* Pipe = GameEngineRenderingPipeLineManager::GetInst().Create("TextureTrans");
 		Pipe->SetInputAssembler1VertexBufferSetting("Rect");
-		Pipe->SetInputAssembler1InputLayOutSetting("Texture_VS");
 		Pipe->SetVertexShader("Texture_VS");
 		Pipe->SetInputAssembler2IndexBufferSetting("Rect");
 		Pipe->SetInputAssembler2TopologySetting(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

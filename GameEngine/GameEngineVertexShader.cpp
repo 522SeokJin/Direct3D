@@ -221,6 +221,12 @@ void GameEngineVertexShader::AddInputLayOut(
 
 void GameEngineVertexShader::CreateLayOut()
 {
+	if (nullptr != LayOut_)
+	{
+		LayOut_->Release();
+		LayOut_ = nullptr;
+	}
+
 	if (
 		S_OK != GameEngineDevice::GetInst().GetDevice()->CreateInputLayout
 		(
@@ -492,4 +498,10 @@ void GameEngineVertexShader::ReSetSampler(const GameEngineSamplerSetting* _Setti
 	static ID3D11SamplerState* const ReSetting[16] = { nullptr };
 
 	GameEngineDevice::GetContext()->VSSetSamplers(_Setting->SettingIndex_, 1, ReSetting);
+}
+
+void GameEngineVertexShader::LayOutReset()
+{
+	SemanticName_.clear();
+	InputLayoutDesc_.clear();
 }

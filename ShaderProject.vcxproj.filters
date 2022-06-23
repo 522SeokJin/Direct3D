@@ -30,5 +30,8 @@
     <FxCompile Include="EngineResources\Shader\TextureAtlas.fx">
       <Filter>Engine</Filter>
     </FxCompile>
+    <FxCompile Include="EngineResources\Shader\LightHeader.fx">
+      <Filter>Engine</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
