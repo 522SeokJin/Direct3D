@@ -1,7 +1,7 @@
 #pragma once
 #include <GameEngineBase/GameEngineObjectNameBase.h>
 
-#include "FBX/fbxsdk.h"
+#include <fbxsdk.h>
 
 // 디버그 모드일때.
 //#pragma comment(lib, "zlib-mt.lib")
@@ -26,6 +26,9 @@ protected:
 
 	bool CreateFBXSystemInitialize(const std::string& _Path);
 
+	// 3DSMAX 는 오른손 좌표계, DirectX의 좌표계로 변경하기 위한 함수
+	void FBXConvertScene();
+
 private:
 
 public:
@@ -36,6 +39,11 @@ protected:
 	fbxsdk::FbxIOSettings* IOSetting;
 	fbxsdk::FbxImporter* Importer;
 	fbxsdk::FbxScene* Scene;
+
+	fbxsdk::FbxNode* RootNode;
+	fbxsdk::FbxAMatrix ConvertMatrix;
+	fbxsdk::FbxAMatrix JointConvertMatrix;
+	fbxsdk::FbxVector4 AxisVector;
 
 private:
 
