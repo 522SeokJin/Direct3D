@@ -79,6 +79,14 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="GameEngineFBX.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="GameEngineFBXMesh.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="GameEngineFolderTexture.h" />
     <ClInclude Include="GameEngineFolderTextureManager.h" />
     <ClInclude Include="GameEngineFont.h">
@@ -309,6 +317,14 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="GameEngineFBX.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="GameEngineFBXMesh.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="GameEngineFolderTexture.cpp" />
     <ClCompile Include="GameEngineFolderTextureManager.cpp" />
     <ClCompile Include="GameEngineFont.cpp">
@@ -502,6 +518,30 @@
     <CopyFileToFolders Include="..\ThirdParty\x64\Release\FW1Font\FW1FontWrapper.lib">
       <FileType>Document</FileType>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\ThirdParty\x64\Release\FBX\libfbxsdk-md.lib">
+      <FileType>Document</FileType>
+    </Library>
+    <Library Include="..\ThirdParty\x64\Release\FBX\libfbxsdk-mt.lib">
+      <FileType>Document</FileType>
+    </Library>
+    <None Include="..\ThirdParty\x64\Release\FBX\libfbxsdk.dll" />
+    <Library Include="..\ThirdParty\x64\Release\FBX\libfbxsdk.lib">
+      <FileType>Document</FileType>
+    </Library>
+    <Library Include="..\ThirdParty\x64\Release\FBX\libxml2-md.lib">
+      <FileType>Document</FileType>
+    </Library>
+    <Library Include="..\ThirdParty\x64\Release\FBX\libxml2-mt.lib">
+      <FileType>Document</FileType>
+    </Library>
+    <Library Include="..\ThirdParty\x64\Release\FBX\zlib-md.lib">
+      <FileType>Document</FileType>
+    </Library>
+    <Library Include="..\ThirdParty\x64\Release\FBX\zlib-mt.lib">
+      <FileType>Document</FileType>
+    </Library>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

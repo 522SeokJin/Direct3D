@@ -103,6 +103,12 @@
     <Filter Include="Object\Component\Render\Sub">
       <UniqueIdentifier>{0771a093-80e1-40de-8e54-069db34a9478}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lib\FBX">
+      <UniqueIdentifier>{d0d1c4b0-1d7f-4042-aea6-555b10c1ed72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\04FBX">
+      <UniqueIdentifier>{a0b9dba7-08d4-41f9-a787-d8e0b7e7ec2f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PreCompile.h">
@@ -326,6 +332,12 @@
     <ClInclude Include="LightActor.h">
       <Filter>Object\EngineActor</Filter>
     </ClInclude>
+    <ClInclude Include="GameEngineFBX.h">
+      <Filter>Resources\04FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineFBXMesh.h">
+      <Filter>Resources\04FBX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PreCompile.cpp">
@@ -538,6 +550,12 @@
     <ClCompile Include="LightActor.cpp">
       <Filter>Object\EngineActor</Filter>
     </ClCompile>
+    <ClCompile Include="GameEngineFBX.cpp">
+      <Filter>Resources\04FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineFBXMesh.cpp">
+      <Filter>Resources\04FBX</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\ThirdParty\x64\Release\DirectXTex\DirectXTex.lib">
@@ -552,5 +570,33 @@
     <CopyFileToFolders Include="..\ThirdParty\x64\Release\FW1Font\FW1FontWrapper.lib">
       <Filter>Lib\FW1Font</Filter>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\ThirdParty\x64\Release\FBX\libfbxsdk.dll">
+      <Filter>Lib\FBX</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\ThirdParty\x64\Release\FBX\libfbxsdk.lib">
+      <Filter>Lib\FBX</Filter>
+    </Library>
+    <Library Include="..\ThirdParty\x64\Release\FBX\libfbxsdk-md.lib">
+      <Filter>Lib\FBX</Filter>
+    </Library>
+    <Library Include="..\ThirdParty\x64\Release\FBX\libfbxsdk-mt.lib">
+      <Filter>Lib\FBX</Filter>
+    </Library>
+    <Library Include="..\ThirdParty\x64\Release\FBX\libxml2-md.lib">
+      <Filter>Lib\FBX</Filter>
+    </Library>
+    <Library Include="..\ThirdParty\x64\Release\FBX\libxml2-mt.lib">
+      <Filter>Lib\FBX</Filter>
+    </Library>
+    <Library Include="..\ThirdParty\x64\Release\FBX\zlib-md.lib">
+      <Filter>Lib\FBX</Filter>
+    </Library>
+    <Library Include="..\ThirdParty\x64\Release\FBX\zlib-mt.lib">
+      <Filter>Lib\FBX</Filter>
+    </Library>
   </ItemGroup>
 </Project>
