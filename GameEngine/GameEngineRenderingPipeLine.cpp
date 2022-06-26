@@ -287,6 +287,8 @@ GameEngineRenderingPipeLine* GameEngineRenderingPipeLine::Clone()
 	NewClone->Blend_ = Blend_;
 	NewClone->RenderTarget_ = RenderTarget_;
 	NewClone->DepthStencil_ = DepthStencil_;
+
+	NewClone->CreateLayOut();
 	NewClone->CloneOn();
 
 	return NewClone;
