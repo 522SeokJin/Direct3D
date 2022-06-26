@@ -338,6 +338,9 @@
     <ClInclude Include="GameEngineFBXMesh.h">
       <Filter>Resources\04FBX</Filter>
     </ClInclude>
+    <ClInclude Include="GameEngineFBXMeshManager.h">
+      <Filter>Resources\99Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PreCompile.cpp">
@@ -555,6 +558,9 @@
     </ClCompile>
     <ClCompile Include="GameEngineFBXMesh.cpp">
       <Filter>Resources\04FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineFBXMeshManager.cpp">
+      <Filter>Resources\99Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

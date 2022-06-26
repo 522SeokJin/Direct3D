@@ -2,10 +2,7 @@
 
 #include <conio.h>
 #include <GameEngine/GameEngineCore.h>
-#include <GameEngine/GameEngineFBX.h>
 #include "UserGame.h"
-
-
 
 int WinMain(
 	HINSTANCE hInstance,
@@ -14,9 +11,5 @@ int WinMain(
 	int       nShowCmd
 )
 {
-	GameEngineFBX ttttt;
-
-	ttttt.Load();
-
 	GameEngineCore::Start<UserGame>();
 }

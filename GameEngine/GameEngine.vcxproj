@@ -87,6 +87,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="GameEngineFBXMeshManager.h" />
     <ClInclude Include="GameEngineFolderTexture.h" />
     <ClInclude Include="GameEngineFolderTextureManager.h" />
     <ClInclude Include="GameEngineFont.h">
@@ -325,6 +326,7 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="GameEngineFBXMeshManager.cpp" />
     <ClCompile Include="GameEngineFolderTexture.cpp" />
     <ClCompile Include="GameEngineFolderTextureManager.cpp" />
     <ClCompile Include="GameEngineFont.cpp">

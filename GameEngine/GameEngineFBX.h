@@ -1,4 +1,5 @@
 #pragma once
+#include <GameEngineBase/GameEngineObjectNameBase.h>
 
 #include "FBX/fbxsdk.h"
 
@@ -11,13 +12,11 @@
 #pragma comment(lib, "libfbxsdk.lib")
 
 // 설명 :
-class GameEngineFBX
+class GameEngineFBX : public GameEngineObjectNameBase
 {
 public:
 	GameEngineFBX();
 	~GameEngineFBX();
-
-	void Load();
 
 protected:
 	GameEngineFBX(const GameEngineFBX& _Other) = delete;
@@ -25,12 +24,18 @@ protected:
 	GameEngineFBX& operator=(const GameEngineFBX& _Other) = delete;
 	GameEngineFBX& operator=(GameEngineFBX&& _Other) noexcept = delete;
 
+	bool CreateFBXSystemInitialize(const std::string& _Path);
+
 private:
 
 public:
 
 protected:
+	// 시작하려면 이녀석이 필요하다.
 	fbxsdk::FbxManager* Manager;
+	fbxsdk::FbxIOSettings* IOSetting;
+	fbxsdk::FbxImporter* Importer;
+	fbxsdk::FbxScene* Scene;
 
 private:
 

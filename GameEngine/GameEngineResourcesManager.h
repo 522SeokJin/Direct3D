@@ -15,6 +15,7 @@
 #include "GameEngineDepthStencilManager.h"
 #include "GameEngineDepthBufferManager.h"
 #include "GameEngineFontManager.h" 
+#include "GameEngineFBXMeshManager.h"
 
 #include "GameEngineRenderingPipeLineManager.h"
 
@@ -32,6 +33,7 @@
 #include "GameEngineBlend.h"
 #include "GameEngineDepthStencil.h"
 #include "GameEngineDepthBuffer.h"
+#include "GameEngineFBXMesh.h"
 
 #include "GameEngineRenderingPipeLine.h"
 
@@ -58,5 +60,6 @@ public:
 		GameEngineBlendManager::Destroy();
 		GameEngineDepthStencilManager::Destroy();
 		GameEngineDepthBufferManager::Destroy();
+		GameEngineFBXMeshManager::Destroy();
 	}
 };

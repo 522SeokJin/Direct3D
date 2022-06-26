@@ -8,6 +8,8 @@ public:
 	GameEngineFBXMesh();
 	~GameEngineFBXMesh();
 
+	void Load(const std::string& _Path);
+
 protected:
 	GameEngineFBXMesh(const GameEngineFBXMesh& _other) = delete; 
 	GameEngineFBXMesh(GameEngineFBXMesh&& _other) noexcept = delete;

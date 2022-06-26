@@ -28,6 +28,17 @@ PlayLevel::~PlayLevel()
 
 void PlayLevel::LevelStart()
 {
+	GameEngineDirectory Dir;
+	Dir.MoveParent("Direct3D");
+	Dir.MoveChild("EngineResources");
+	Dir.MoveChild("FBX");
+
+	std::vector<GameEngineFile> Files = Dir.GetAllFile();
+
+	for (auto& File : Files)
+	{
+		GameEngineFBXMeshManager::GetInst().Load(File.GetFullPath());
+	}
 
 	GetMainCamera()->SetProjectionMode(ProjectionMode::Perspective);
 	GetMainCameraActor()->GetTransform()->SetLocalPosition(float4(0.0f, 0.0f, -100.0f));
