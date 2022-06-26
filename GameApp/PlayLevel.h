@@ -17,7 +17,6 @@ public:
 	PlayLevel& operator=(PlayLevel&& _Other) noexcept = delete;
 
 	MouseActor* MActor; 
-	class PostFade* FadeEffect;
 
 protected:
 

@@ -18,6 +18,7 @@
 #include "UserGame.h"
 
 PlayLevel::PlayLevel()
+	: MActor(nullptr)
 {
 }
 

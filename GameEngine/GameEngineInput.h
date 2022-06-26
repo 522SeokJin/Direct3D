@@ -21,6 +21,15 @@ private:
         friend GameEngineInput;
 
     public:
+        GameEngineKey()
+            : Down_(false)
+            , Press_(false)
+            , Up_(false)
+            , Free_(false)
+        {
+
+        }
+
         void PushKey(int _CurKey)
         {
             //if ('a'<= _CurKey && 'z' >= _CurKey)

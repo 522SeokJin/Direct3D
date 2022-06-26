@@ -30,6 +30,9 @@ struct LightsData
 {
 	int LightCount;
 	LightData Lights[128];
+	LightsData()
+		: LightCount(0)
+	{}
 };
 
 // Ό³Έν :
