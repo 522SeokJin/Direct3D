@@ -9,6 +9,11 @@ public:
 	LightActor();
 	~LightActor();
 
+	GameEngineLightComponent* GetLight()
+	{
+		return Light_;
+	}
+
 protected:
 	LightActor(const LightActor& _other) = delete; 
 	LightActor(LightActor&& _other) noexcept = delete;

@@ -62,6 +62,9 @@ bool ZSort(GameEngineRenderer* _Left, GameEngineRenderer* _Right)
 
 void CameraComponent::Render()
 {
+	// 렌더링 전 카메라의 최종행렬을 계산한다.
+	CameraTransformUpdate();
+
 	float4x4 View = GetTransform()->GetTransformData().View_;
 	float4x4 Projection = GetTransform()->GetTransformData().Projection_;
 
@@ -75,13 +78,13 @@ void CameraComponent::Render()
 		LightData_.Lights[LightIndex].ViewLightDir *= View;
 		LightData_.Lights[LightIndex].ViewNegLightDir = 
 			-(LightData_.Lights[LightIndex].ViewLightDir);
+
+		LightData_.Lights[LightIndex].ViewLightPosition *= View;
+		++LightIndex;
 	}
 
 	// 카메라 전용 렌더타겟으로 셋팅
 	CameraBufferTarget_->Setting();
-
-	// 렌더링 전 카메라의 최종행렬을 계산한다.
-	CameraTransformUpdate();
 
 	for (std::pair<int, std::list<GameEngineRenderer*>> Pair : RendererList_)
 	{

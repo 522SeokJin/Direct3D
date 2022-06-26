@@ -29,7 +29,7 @@ VertexOut TextureAtlas_VS(VertexIn _in)
     Out.Position = _in.Position;
 
     Out.Position.w = 1.0f;
-    Out.Position = mul(Out.Position, WVP);
+    Out.Position = mul(Out.Position, WVP_);
 
     // 0 0 
     // 1, 0

@@ -1,22 +1,26 @@
 
 cbuffer TransformData : register(b0)
 {
-    float4 vWorldTranslation;
-    float4 vWorldRotation;
-    float4 vWorldScaling;
+    float4 vWorldPosition_;
+    float4 vWorldRotation_;
+    float4 vWorldScaling_;
 
-    float4 vLocalTranslation;
-    float4 vLocalRotation;
-    float4 vLocalScaling;
+    float4 vLocalPosition_;
+    float4 vLocalRotation_;
+    float4 vLocalScaling_;
 
-    float4x4 Scaling;
-    float4x4 Rotation;
-    float4x4 Translation;
-    float4x4 Revolve;
-    float4x4 Parent;
-    float4x4 World;
-    float4x4 View;
-    float4x4 Projection;
-    float4x4 WV;
-    float4x4 WVP;
+    float4x4 LocalScaling_;
+    float4x4 LocalRotation_;
+    float4x4 LocalPosition_;
+    float4x4 LocalWorld_;
+
+    float4x4 Parent_;
+    float4x4 WorldWorld_;
+
+    float4x4 View_;
+    float4x4 Projection_;
+
+    float4x4 WV_;
+    float4x4 WVP_;
 };
+
