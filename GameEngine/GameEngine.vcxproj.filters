@@ -570,33 +570,29 @@
     <CopyFileToFolders Include="..\ThirdParty\x64\Release\FW1Font\FW1FontWrapper.lib">
       <Filter>Lib\FW1Font</Filter>
     </CopyFileToFolders>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\ThirdParty\x64\Release\FBX\libfbxsdk.dll">
+    <CopyFileToFolders Include="..\ThirdParty\x64\Release\FBX\libfbxsdk.dll">
       <Filter>Lib\FBX</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="..\ThirdParty\x64\Release\FBX\libfbxsdk.lib">
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ThirdParty\x64\Release\FBX\libfbxsdk.lib">
       <Filter>Lib\FBX</Filter>
-    </Library>
-    <Library Include="..\ThirdParty\x64\Release\FBX\libfbxsdk-md.lib">
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ThirdParty\x64\Release\FBX\libfbxsdk-md.lib">
       <Filter>Lib\FBX</Filter>
-    </Library>
-    <Library Include="..\ThirdParty\x64\Release\FBX\libfbxsdk-mt.lib">
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ThirdParty\x64\Release\FBX\libfbxsdk-mt.lib">
       <Filter>Lib\FBX</Filter>
-    </Library>
-    <Library Include="..\ThirdParty\x64\Release\FBX\libxml2-md.lib">
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ThirdParty\x64\Release\FBX\libxml2-md.lib">
       <Filter>Lib\FBX</Filter>
-    </Library>
-    <Library Include="..\ThirdParty\x64\Release\FBX\libxml2-mt.lib">
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ThirdParty\x64\Release\FBX\libxml2-mt.lib">
       <Filter>Lib\FBX</Filter>
-    </Library>
-    <Library Include="..\ThirdParty\x64\Release\FBX\zlib-md.lib">
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ThirdParty\x64\Release\FBX\zlib-md.lib">
       <Filter>Lib\FBX</Filter>
-    </Library>
-    <Library Include="..\ThirdParty\x64\Release\FBX\zlib-mt.lib">
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ThirdParty\x64\Release\FBX\zlib-mt.lib">
       <Filter>Lib\FBX</Filter>
-    </Library>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>
