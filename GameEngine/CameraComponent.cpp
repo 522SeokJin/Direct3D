@@ -62,14 +62,27 @@ bool ZSort(GameEngineRenderer* _Left, GameEngineRenderer* _Right)
 
 void CameraComponent::Render()
 {
+	float4x4 View = GetTransform()->GetTransformData().View_;
+	float4x4 Projection = GetTransform()->GetTransformData().Projection_;
+
+	LightData_.LightCount = static_cast<int>(Lights_.size());
+
+	int LightIndex = 0;
+	for (GameEngineLightComponent* Light : Lights_)
+	{
+		LightData_.Lights[LightIndex] = Light->GetLightData();
+
+		LightData_.Lights[LightIndex].ViewLightDir *= View;
+		LightData_.Lights[LightIndex].ViewNegLightDir = 
+			-(LightData_.Lights[LightIndex].ViewLightDir);
+	}
+
 	// 카메라 전용 렌더타겟으로 셋팅
 	CameraBufferTarget_->Setting();
 
 	// 렌더링 전 카메라의 최종행렬을 계산한다.
 	CameraTransformUpdate();
 
-	float4x4 View = GetTransform()->GetTransformData().View_;
-	float4x4 Projection = GetTransform()->GetTransformData().Projection_;
 	for (std::pair<int, std::list<GameEngineRenderer*>> Pair : RendererList_)
 	{
 		std::list<GameEngineRenderer*>& Renderers = Pair.second;
@@ -200,6 +213,11 @@ void CameraComponent::SetProjectionMode(ProjectionMode _ProjectionMode)
 void CameraComponent::PushRenderer(int _Order, GameEngineRenderer* _Renderer)
 {
 	RendererList_[_Order].push_back(_Renderer);
+}
+
+void CameraComponent::PushLight(GameEngineLightComponent* _Light)
+{
+	Lights_.push_back(_Light);
 }
 
 void CameraComponent::PushDebugRender(GameEngineTransform* _Trans, CollisionType _Type)

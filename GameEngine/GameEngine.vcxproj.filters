@@ -320,8 +320,11 @@
     <ClInclude Include="SKySphereActor.h">
       <Filter>Object\EngineActor</Filter>
     </ClInclude>
-    <ClInclude Include="GameEngineLight.h">
+    <ClInclude Include="GameEngineLightComponent.h">
       <Filter>Object\Component\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="LightActor.h">
+      <Filter>Object\EngineActor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -526,11 +529,14 @@
     <ClCompile Include="SKySphereActor.cpp">
       <Filter>Object\EngineActor</Filter>
     </ClCompile>
-    <ClCompile Include="GameEngineLight.cpp">
-      <Filter>Object\Component\Render</Filter>
-    </ClCompile>
     <ClCompile Include="EngineVertex.cpp">
       <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineLightComponent.cpp">
+      <Filter>Object\Component\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="LightActor.cpp">
+      <Filter>Object\EngineActor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

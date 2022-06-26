@@ -17,5 +17,6 @@ cbuffer TransformData : register(b0)
     float4x4 World;
     float4x4 View;
     float4x4 Projection;
+    float4x4 WV;
     float4x4 WVP;
 };

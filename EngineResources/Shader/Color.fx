@@ -1,17 +1,30 @@
 #include "CbufferHeader.fx"
-// b32 까지 가능했던걸로 아는데
-// 그냥 생각하지 맙시다.
-// 512바이트 가 최대일겁니다.
+#include "LightHeader.fx"
 
-float4 Color_VS(float4 pos : POSITION) : SV_POSITION
+struct VertexIn
 {
-    // pos *= World;
+    float4 Position : POSITION;
+    float4 Normal : NORMAL;
+};
 
-    pos.w = 1.0f;
+struct VertexOut
+{
+    float4 Position : SV_POSITION;
+    float4 ViewNormal : NORMAL;
+};
 
-    pos = mul(pos, WVP);
+VertexOut Color_VS(VertexIn _In)
+{
+    VertexOut Out = (VertexOut) 0;
+    
+    Out.Position.w = 1.0f;
+    Out.ViewNormal.w = 0.0f;
+    // 픽셀을 건져내기 위한 포지션
+    Out.Position = mul(_In.Position, WVP);
+    Out.ViewNormal = mul(_In.Normal, WV);
+    Out.ViewNormal = normalize(Out.ViewNormal);
 
-    return pos;
+    return Out;
 }
 
 cbuffer ResultColor : register(b0)
@@ -21,5 +34,7 @@ cbuffer ResultColor : register(b0)
 
 float4 Color_PS(float4 pos : SV_POSITION) : SV_Target0
 {
-    return vColor;
+    float4 Color = Lights[0].ViewLightDir + vColor;
+    
+    return Color;
 }

@@ -43,6 +43,7 @@ public:
 	float4x4 View_;
 	float4x4 Projection_;
 
+	float4x4 WV_;
 	float4x4 WVP_;
 
 public:
@@ -71,6 +72,7 @@ public:
 
 	void WVPCalculation()
 	{
+		WV_ = WorldWorld_ * View_;
 		WVP_ = WorldWorld_ * View_ * Projection_;
 	}
 

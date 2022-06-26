@@ -63,6 +63,12 @@ void GameEngineRenderer::SetRenderingPipeLine(const std::string& _Value)
 		ShaderHelper.SettingConstantBufferLink("TransformData", GetTransform()->GetTransformData());
 	}
 
+	if (true == ShaderHelper.IsConstantBuffer("LightsData"))
+	{
+		LightsData& Data = GetLevel()->GetMainCamera()->LightData_;
+		ShaderHelper.SettingConstantBufferLink("LightsData", Data);
+	}
+
 	if (nullptr == PipeLine_)
 	{
 		GameEngineDebug::MsgBoxError("존재하지 않는 파이프라인 입니다!");

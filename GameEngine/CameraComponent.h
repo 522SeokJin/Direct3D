@@ -2,7 +2,7 @@
 #include "GameEngineTransformComponent.h"
 #include "GameEngineDebugRenderData.h"
 #include "Enums.h"
-#include "GameEngineLight.h"
+#include "GameEngineLightComponent.h"
 
 // 투영 타입
 enum class ProjectionMode
@@ -19,6 +19,7 @@ class CameraComponent : public GameEngineTransformComponent
 {
 	friend class CameraActor;
 	friend class GameEngineLevel;
+	friend class GameEngineRenderer;
 
 private:	// member Var
 	ProjectionMode				ProjectionMode_;			// 
@@ -29,6 +30,7 @@ private:	// member Var
 
 private:
 	LightsData LightData_;
+	std::list<GameEngineLightComponent*> Lights_;
 	std::map<int, std::list<GameEngineRenderer*>> RendererList_;
 
 private:
@@ -71,6 +73,7 @@ public:
 public:
 	void SetProjectionMode(ProjectionMode _ProjectionMode);
 	void PushRenderer(int _Order, GameEngineRenderer* _Renderer);
+	void PushLight(GameEngineLightComponent* _Light);
 
 public:
 	void PushDebugRender(GameEngineTransform* _Trans, CollisionType _Type);

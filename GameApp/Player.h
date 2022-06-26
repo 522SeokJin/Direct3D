@@ -33,8 +33,6 @@ private:
 	void Start() override;
 	void Update(float _DeltaTime) override;
 
-	void TestTimeEvent();
-
 	void LevelChangeEndEvent(GameEngineLevel* _NextLevel) override;
 };
 

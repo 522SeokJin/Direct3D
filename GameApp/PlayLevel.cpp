@@ -4,13 +4,14 @@
 #include "Monster.h"
 #include "TopUI.h"
 #include "Map.h"
-#include <GameEngine\PostFade.h>
-#include <GameEngine\PostBlur.h>
-#include <GameEngine\SmallPostBlur.h>
+#include <GameEngine/PostFade.h>
+#include <GameEngine/PostBlur.h>
+#include <GameEngine/SmallPostBlur.h>
 #include <GameEngine/CameraComponent.h>
 #include <GameEngine/GameEngineTransform.h>
 #include <GameEngine/CameraActor.h>
 #include <GameEngine/MouseActor.h>
+#include <GameEngine/LightActor.h>
 #include <GameEngine/SKySphereActor.h>
 #include <GameEngine/GameEngineGUI.h>
 #include <GameEngine/GameEngineRenderWindow.h>
@@ -109,7 +110,7 @@ void PlayLevel::CreateActorLevel()
 	}
 
 	{
-		CreateActor<GameEngineLight>();
+		CreateActor<LightActor>();
 	}
 
 	{

@@ -12,3 +12,6 @@
 #include <GameEngineBase/GameEngineMath.h>
 
 #include <GameEngine/GameEngineRenderingPipeLine.h>
+#include <GameEngine/GameEngineLevel.h>
+#include <GameEngine/GameEngineRenderer.h>
+#include <GameEngine/CameraComponent.h>
