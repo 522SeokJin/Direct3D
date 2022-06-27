@@ -6,10 +6,11 @@
 
 GameEngineRenderingPipeLine::GameEngineRenderingPipeLine() // default constructer 디폴트 생성자
 	: VertexBuffer_(nullptr)
-	//, InputLayOutVertexShader_(nullptr)
 	, VertexShader_(nullptr)
 	, IndexBuffer_(nullptr)
 	, Topology_(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
+	, LayOut_(nullptr)
+	, IsCloneLayOutCreate(false)
 {
 	SetOutputMergerBlend("AlphaBlend");
 	SetRasterizer("EngineBaseRasterizerBack");
@@ -19,11 +20,23 @@ GameEngineRenderingPipeLine::GameEngineRenderingPipeLine() // default constructe
 
 GameEngineRenderingPipeLine::~GameEngineRenderingPipeLine() // default destructer 디폴트 소멸자
 {
-	if (nullptr != LayOut_)
+	if (IsClone() && true == IsCloneLayOutCreate)
 	{
-		LayOut_->Release();
-		LayOut_ = nullptr;
+		if (nullptr != LayOut_)
+		{
+			LayOut_->Release();
+			LayOut_ = nullptr;
+		}
 	}
+	else if (false == IsClone())
+	{
+		if (nullptr != LayOut_)
+		{
+			LayOut_->Release();
+			LayOut_ = nullptr;
+		}
+	}
+
 
 	// 이녀석만 레스터라이저가 달랐으면 좋겠다고 
 	// 해서 바꿀때 레스터라이저를 복사해냈으니까.
@@ -106,11 +119,16 @@ void GameEngineRenderingPipeLine::SetVertexShader(const std::string& _Name)
 // 버텍스버퍼와 버텍스 쉐이더가 둘다 세팅되었을때만 호출될겁니다.
 void GameEngineRenderingPipeLine::CreateLayOut()
 {
-	if (nullptr != LayOut_)
+	if (true == IsClone())
 	{
-		LayOut_->Release();
-		LayOut_ = nullptr;
+		IsCloneLayOutCreate = true;
 	}
+
+	//if (nullptr != LayOut_)
+	//{
+	//	LayOut_->Release();
+	//	LayOut_ = nullptr;
+	//}
 
 	if (nullptr == VertexBuffer_->InputLayoutDesc_)
 	{
@@ -269,8 +287,10 @@ void GameEngineRenderingPipeLine::Copy(GameEngineRenderingPipeLine* _Value)
 	Rasterizer_ = _Value->Rasterizer_;
 	PixelShader_ = _Value->PixelShader_;
 	Blend_ = _Value->Blend_;
+	// LayOut_ = _Value->LayOut_;
 	RenderTarget_ = _Value->RenderTarget_;
 	DepthStencil_ = _Value->DepthStencil_;
+
 }
 
 GameEngineRenderingPipeLine* GameEngineRenderingPipeLine::Clone()
@@ -278,9 +298,9 @@ GameEngineRenderingPipeLine* GameEngineRenderingPipeLine::Clone()
 	GameEngineRenderingPipeLine* NewClone = new GameEngineRenderingPipeLine();
 
 	NewClone->VertexBuffer_ = VertexBuffer_;
-	//NewClone->InputLayOutVertexShader_	= InputLayOutVertexShader_;
 	NewClone->VertexShader_ = VertexShader_;
 	NewClone->IndexBuffer_ = IndexBuffer_;
+	NewClone->LayOut_ = LayOut_;
 	NewClone->Topology_ = Topology_;
 	NewClone->Rasterizer_ = Rasterizer_;
 	NewClone->PixelShader_ = PixelShader_;
@@ -288,7 +308,7 @@ GameEngineRenderingPipeLine* GameEngineRenderingPipeLine::Clone()
 	NewClone->RenderTarget_ = RenderTarget_;
 	NewClone->DepthStencil_ = DepthStencil_;
 
-	NewClone->CreateLayOut();
+	// NewClone->CreateLayOut();
 	NewClone->CloneOn();
 
 	return NewClone;

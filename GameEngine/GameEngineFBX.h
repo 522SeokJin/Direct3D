@@ -18,6 +18,15 @@ public:
 	GameEngineFBX();
 	~GameEngineFBX();
 
+	inline fbxsdk::FbxNode* GetRootNode()
+	{
+		return RootNode;
+	}
+
+	void RecursiveAllNode(std::function<void(fbxsdk::FbxNodeAttribute::EType, 
+		fbxsdk::FbxNode*)> _CallBack);
+	void Reset();
+
 protected:
 	GameEngineFBX(const GameEngineFBX& _Other) = delete;
 	GameEngineFBX(GameEngineFBX&& _Other) noexcept = delete;
@@ -28,6 +37,9 @@ protected:
 
 	// 3DSMAX 는 오른손 좌표계, DirectX의 좌표계로 변경하기 위한 함수
 	void FBXConvertScene();
+
+	void RecursiveAllNode(fbxsdk::FbxNode* _Node, std::function<
+		void(fbxsdk::FbxNodeAttribute::EType, fbxsdk::FbxNode*)> _CallBack = nullptr);
 
 private:
 

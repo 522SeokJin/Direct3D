@@ -341,6 +341,9 @@
     <ClInclude Include="GameEngineFBXMeshManager.h">
       <Filter>Resources\99Manager</Filter>
     </ClInclude>
+    <ClInclude Include="GameEngineFBXWindow.h">
+      <Filter>Imgui\EngineWindow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PreCompile.cpp">
@@ -561,6 +564,9 @@
     </ClCompile>
     <ClCompile Include="GameEngineFBXMeshManager.cpp">
       <Filter>Resources\99Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineFBXWindow.cpp">
+      <Filter>Imgui\EngineWindow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -5,6 +5,8 @@
 class GameEngineFBXMesh;
 class GameEngineFBXMeshManager
 {
+	friend class GameEngineFBXWindow;
+
 private:
 	static GameEngineFBXMeshManager* Inst;
 

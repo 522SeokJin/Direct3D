@@ -13,6 +13,7 @@
 #include <GameEngine/MouseActor.h>
 #include <GameEngine/LightActor.h>
 #include <GameEngine/SKySphereActor.h>
+#include <GameEngine/GameEngineFBXWindow.h>
 #include <GameEngine/GameEngineGUI.h>
 #include <GameEngine/GameEngineRenderWindow.h>
 #include "UserGame.h"
@@ -28,18 +29,20 @@ PlayLevel::~PlayLevel()
 
 void PlayLevel::LevelStart()
 {
+	GameEngineFBXWindow* ImageWindow = GameEngineGUI::GetInst()->CreateGUIWindow<GameEngineFBXWindow>("FBXWindow");
+
 	GameEngineDirectory Dir;
 	Dir.MoveParent("Direct3D");
 	Dir.MoveChild("EngineResources");
 	Dir.MoveChild("FBX");
 
-	std::vector<GameEngineFile> Files = Dir.GetAllFile();
+	std::vector<GameEngineFile> Files = Dir.GetAllFile("FBX");
 
 	for (auto& File : Files)
 	{
 		GameEngineFBXMeshManager::GetInst().Load(File.GetFullPath());
 	}
-
+		
 	GetMainCamera()->SetProjectionMode(ProjectionMode::Perspective);
 	GetMainCameraActor()->GetTransform()->SetLocalPosition(float4(0.0f, 0.0f, -100.0f));
 

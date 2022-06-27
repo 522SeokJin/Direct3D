@@ -25,6 +25,7 @@ private:	// member Var
 	// IA1
 	//GameEngineVertexShader* InputLayOutVertexShader_;
 	ID3D11InputLayout* LayOut_;
+	bool IsCloneLayOutCreate;
 	// VS
 	GameEngineVertexShader* VertexShader_;
 	// IA2

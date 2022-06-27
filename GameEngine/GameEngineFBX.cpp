@@ -13,6 +13,11 @@ GameEngineFBX::GameEngineFBX()
 
 GameEngineFBX::~GameEngineFBX()
 {
+	Reset();
+}
+
+void GameEngineFBX::Reset()
+{
 	if (nullptr != Scene)
 	{
 		Scene->Destroy();
@@ -177,5 +182,94 @@ void GameEngineFBX::FBXConvertScene()
 		GameEngineDebug::MsgBoxError("루트노드생성에 실패했습니다.");
 	}
 
+	RecursiveAllNode(RootNode);
+
 	return;
+}
+
+void GameEngineFBX::RecursiveAllNode(fbxsdk::FbxNode* _Node, 
+	std::function<void(fbxsdk::FbxNodeAttribute::EType, fbxsdk::FbxNode*)> _CallBack)
+{
+	fbxsdk::FbxNodeAttribute* Info = _Node->GetNodeAttribute();
+
+	if (nullptr != Info)
+	{
+		fbxsdk::FbxNodeAttribute::EType Type = Info->GetAttributeType();
+
+		switch (Type)
+		{
+		case fbxsdk::FbxNodeAttribute::eUnknown:
+			break;
+		case fbxsdk::FbxNodeAttribute::eNull:
+			break;
+		case fbxsdk::FbxNodeAttribute::eMarker:
+			break;
+		case fbxsdk::FbxNodeAttribute::eSkeleton:
+			break;
+		case fbxsdk::FbxNodeAttribute::eMesh:
+			break;
+		case fbxsdk::FbxNodeAttribute::eNurbs:
+			break;
+		case fbxsdk::FbxNodeAttribute::ePatch:
+			break;
+		case fbxsdk::FbxNodeAttribute::eCamera:
+			break;
+		case fbxsdk::FbxNodeAttribute::eCameraStereo:
+			break;
+		case fbxsdk::FbxNodeAttribute::eCameraSwitcher:
+			break;
+		case fbxsdk::FbxNodeAttribute::eLight:
+			break;
+		case fbxsdk::FbxNodeAttribute::eOpticalReference:
+			break;
+		case fbxsdk::FbxNodeAttribute::eOpticalMarker:
+			break;
+		case fbxsdk::FbxNodeAttribute::eNurbsCurve:
+			break;
+		case fbxsdk::FbxNodeAttribute::eTrimNurbsSurface:
+			break;
+		case fbxsdk::FbxNodeAttribute::eBoundary:
+			break;
+		case fbxsdk::FbxNodeAttribute::eNurbsSurface:
+			break;
+		case fbxsdk::FbxNodeAttribute::eShape:
+			break;
+		case fbxsdk::FbxNodeAttribute::eLODGroup:
+			break;
+		case fbxsdk::FbxNodeAttribute::eSubDiv:
+			break;
+		case fbxsdk::FbxNodeAttribute::eCachedEffect:
+			break;
+		case fbxsdk::FbxNodeAttribute::eLine:
+			break;
+		default:
+			break;
+		}
+	}
+
+	if (nullptr != _CallBack)
+	{
+		if (nullptr != Info)
+		{
+			fbxsdk::FbxNodeAttribute::EType Type = Info->GetAttributeType();
+			_CallBack(Type, _Node);
+		}
+		else
+		{
+			_CallBack(fbxsdk::FbxNodeAttribute::EType::eUnknown, _Node);
+		}
+	}
+
+	int ChildCount = _Node->GetChildCount();
+
+	for (int i = 0; i < ChildCount; i++)
+	{
+		fbxsdk::FbxNode* ChildNode = _Node->GetChild(i);
+		RecursiveAllNode(ChildNode);
+	}
+}
+
+void GameEngineFBX::RecursiveAllNode(std::function<void(fbxsdk::FbxNodeAttribute::EType, fbxsdk::FbxNode*)> _CallBack)
+{
+	RecursiveAllNode(GetRootNode(), _CallBack);
 }
