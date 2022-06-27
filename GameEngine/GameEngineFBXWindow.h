@@ -31,6 +31,7 @@ protected:
 	void OnGUI() override;
 
 public:
+	int Select;
 
 private:
 	// GameEngineFBXMesh FBXMesh;

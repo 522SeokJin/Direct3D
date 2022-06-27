@@ -1,5 +1,6 @@
 #pragma once
 #include <GameEngine/GameEngineDevice.h>
+#include "GameEngineFBXMesh.h"
 
 // Ό³Έν : 
 class GameEngineFBXMesh;

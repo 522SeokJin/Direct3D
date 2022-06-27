@@ -23,8 +23,11 @@ public:
 		return RootNode;
 	}
 
-	void RecursiveAllNode(std::function<void(fbxsdk::FbxNodeAttribute::EType, 
-		fbxsdk::FbxNode*)> _CallBack);
+	void RecursiveAllNode(
+		std::function<int(fbxsdk::FbxNodeAttribute::EType, fbxsdk::FbxNode*, int)> _InitCallBack,
+		std::function<void(fbxsdk::FbxNodeAttribute::EType, fbxsdk::FbxNode*, int)> _EndCallBack,
+		int _ParentReturn
+	);
 	void Reset();
 
 protected:
@@ -38,8 +41,10 @@ protected:
 	// 3DSMAX 는 오른손 좌표계, DirectX의 좌표계로 변경하기 위한 함수
 	void FBXConvertScene();
 
-	void RecursiveAllNode(fbxsdk::FbxNode* _Node, std::function<
-		void(fbxsdk::FbxNodeAttribute::EType, fbxsdk::FbxNode*)> _CallBack = nullptr);
+	void RecursiveAllNode(fbxsdk::FbxNode* _Node,
+		std::function<int(fbxsdk::FbxNodeAttribute::EType, fbxsdk::FbxNode*, int)> _InitCallBack,
+		std::function<void(fbxsdk::FbxNodeAttribute::EType, fbxsdk::FbxNode*, int)> _EndCallBack,
+		int _ParentReturn);
 
 private:
 

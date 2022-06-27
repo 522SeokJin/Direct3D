@@ -1,19 +1,11 @@
 #include "PreCompile.h"
 #include "GameEngineFBX.h"
 
+#pragma comment(lib, "libfbxsdk.lib")
+
+
 GameEngineFBX::GameEngineFBX()
-	: Manager(nullptr)
-	, IOSetting(nullptr)
-	, Importer(nullptr)
-	, Scene(nullptr)
-	, RootNode(nullptr)
 {
-
-}
-
-GameEngineFBX::~GameEngineFBX()
-{
-	Reset();
 }
 
 void GameEngineFBX::Reset()
@@ -40,6 +32,11 @@ void GameEngineFBX::Reset()
 	}
 }
 
+GameEngineFBX::~GameEngineFBX()
+{
+	Reset();
+}
+
 bool GameEngineFBX::CreateFBXSystemInitialize(const std::string& _Path)
 {
 	Manager = fbxsdk::FbxManager::Create();
@@ -52,10 +49,9 @@ bool GameEngineFBX::CreateFBXSystemInitialize(const std::string& _Path)
 
 	// fbx파일을 읽는 방법을 정의한다.
 	// these defines are used for hierarchical properties names 구조도를 타고 읽겠다.
-	// IOSROOT -> 루트부터 읽겠다.
 	IOSetting = fbxsdk::FbxIOSettings::Create(Manager, IOSROOT);
-	
-	// 마지막이 경로일텐데 만들고나서 할 수 있다.
+
+	// 마지막이 경로일텐데 만들고나서 할수 있다.
 	Importer = fbxsdk::FbxImporter::Create(Manager, "");
 
 	if (false == Importer->Initialize(GameEngineString::AnsiToUTF8Return(_Path).c_str(), -1, IOSetting))
@@ -85,6 +81,10 @@ bool GameEngineFBX::CreateFBXSystemInitialize(const std::string& _Path)
 
 void GameEngineFBX::FBXConvertScene()
 {
+	// int a = 0;
+
+	// fbxsdk::FbxAxisSystem::ECoordSystem CooreSystem = fbxsdk::FbxAxisSystem::ECoordSystem::eRightHanded;
+
 	fbxsdk::FbxAxisSystem::EUpVector UpVector = fbxsdk::FbxAxisSystem::eYAxis;
 	fbxsdk::FbxAxisSystem::EFrontVector FrontVector = (fbxsdk::FbxAxisSystem::EFrontVector)-fbxsdk::FbxAxisSystem::eParityOdd;
 	fbxsdk::FbxAxisSystem::ECoordSystem CooreSystem = fbxsdk::FbxAxisSystem::ECoordSystem::eRightHanded;
@@ -93,8 +93,8 @@ void GameEngineFBX::FBXConvertScene()
 	// fbxsdk::FbxAxisSystem EngineAxisSystem(fbxsdk::FbxAxisSystem::EPreDefinedAxisSystem::eDirectX);
 
 	fbxsdk::FbxAxisSystem SourceAxisSystem = Scene->GetGlobalSettings().GetAxisSystem();
-	
-	// Convert 작업을 해줘야 한다.
+
+	// 이건 이제 컨버트 해줘야 하는겁니다.
 	if (SourceAxisSystem != EngineAxisSystem)
 	{
 		// 먼저 루트를 지워.
@@ -102,14 +102,13 @@ void GameEngineFBX::FBXConvertScene()
 		// 루트가 새롭게 만들어진다.
 		EngineAxisSystem.ConvertScene(Scene);
 
-		// 매쉬의 기존 매트릭스를 가져온다.
+		// 매쉬의 기존 매트릭스를 가져옵니다.
 		fbxsdk::FbxAMatrix SourceMatrix;
 		SourceAxisSystem.GetMatrix(SourceMatrix);
 
 		fbxsdk::FbxAMatrix EngineMatrix;
 		EngineAxisSystem.GetMatrix(EngineMatrix);
 
-		// 기존에 곱해진 행렬을 역행렬로 취소하고, 우리 기준의 행렬을 곱함
 		ConvertMatrix = SourceMatrix.Inverse() * EngineMatrix;
 	}
 
@@ -182,14 +181,20 @@ void GameEngineFBX::FBXConvertScene()
 		GameEngineDebug::MsgBoxError("루트노드생성에 실패했습니다.");
 	}
 
-	RecursiveAllNode(RootNode);
+
+	// RecursiveAllNode(RootNode);
 
 	return;
 }
 
-void GameEngineFBX::RecursiveAllNode(fbxsdk::FbxNode* _Node, 
-	std::function<void(fbxsdk::FbxNodeAttribute::EType, fbxsdk::FbxNode*)> _CallBack)
+void GameEngineFBX::RecursiveAllNode(
+	fbxsdk::FbxNode* _Node,
+	std::function<int(fbxsdk::FbxNodeAttribute::EType, fbxsdk::FbxNode*, int)> _InitCallBack,
+	std::function<void(fbxsdk::FbxNodeAttribute::EType, fbxsdk::FbxNode*, int)> _EndCallBack,
+	int _ParentReturn
+)
 {
+	// fbxsdk::FbxNodeAttribute* Info = _Node->GetNodeAttribute();
 	fbxsdk::FbxNodeAttribute* Info = _Node->GetNodeAttribute();
 
 	if (nullptr != Info)
@@ -247,29 +252,50 @@ void GameEngineFBX::RecursiveAllNode(fbxsdk::FbxNode* _Node,
 		}
 	}
 
-	if (nullptr != _CallBack)
+	int StartReturn = 0;
+
+	if (nullptr != _InitCallBack)
 	{
 		if (nullptr != Info)
 		{
 			fbxsdk::FbxNodeAttribute::EType Type = Info->GetAttributeType();
-			_CallBack(Type, _Node);
+			StartReturn = _InitCallBack(Type, _Node, _ParentReturn);
 		}
 		else
 		{
-			_CallBack(fbxsdk::FbxNodeAttribute::EType::eUnknown, _Node);
+			StartReturn = _InitCallBack(fbxsdk::FbxNodeAttribute::EType::eUnknown, _Node, _ParentReturn);
 		}
 	}
+
 
 	int ChildCount = _Node->GetChildCount();
 
 	for (int i = 0; i < ChildCount; i++)
 	{
 		fbxsdk::FbxNode* ChildNode = _Node->GetChild(i);
-		RecursiveAllNode(ChildNode);
+		RecursiveAllNode(ChildNode, _InitCallBack, _EndCallBack, StartReturn);
 	}
+
+	if (nullptr != _EndCallBack)
+	{
+		if (nullptr != Info)
+		{
+			fbxsdk::FbxNodeAttribute::EType Type = Info->GetAttributeType();
+			_EndCallBack(Type, _Node, StartReturn);
+		}
+		else
+		{
+			_EndCallBack(fbxsdk::FbxNodeAttribute::EType::eUnknown, _Node, StartReturn);
+		}
+	}
+
 }
 
-void GameEngineFBX::RecursiveAllNode(std::function<void(fbxsdk::FbxNodeAttribute::EType, fbxsdk::FbxNode*)> _CallBack)
+void GameEngineFBX::RecursiveAllNode(
+	std::function<int(fbxsdk::FbxNodeAttribute::EType, fbxsdk::FbxNode*, int)> _InitCallBack,
+	std::function<void(fbxsdk::FbxNodeAttribute::EType, fbxsdk::FbxNode*, int)> _EndCallBack,
+	int _ParentReturn
+)
 {
-	RecursiveAllNode(GetRootNode(), _CallBack);
+	RecursiveAllNode(GetRootNode(), _InitCallBack, _EndCallBack, _ParentReturn);
 }
