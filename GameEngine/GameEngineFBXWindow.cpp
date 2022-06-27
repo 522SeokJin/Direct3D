@@ -1,7 +1,6 @@
 #include "PreCompile.h"
 #include "GameEngineFBXWindow.h"
 #include <iostream>
-#include "GameEngineImageShotWindow.h"
 #include "GameEngineFBXMeshManager.h"
 
 
@@ -16,8 +15,6 @@ GameEngineFBXWindow::~GameEngineFBXWindow()
 
 void GameEngineFBXWindow::OnGUI()
 {
-    
-
     std::vector<const char*> Arr;
 
     for (auto& Ref : GameEngineFBXMeshManager::GetInst().ResourcesMap)
@@ -25,11 +22,14 @@ void GameEngineFBXWindow::OnGUI()
         Arr.push_back(Ref.first.c_str());
     }
 
-    ImGui::BeginChildFrame(reinterpret_cast<ImGuiID>("##FBXRANGE"), {200, 500});
+    ImGui::BeginChildFrame(static_cast<ImGuiID>(
+        reinterpret_cast<uint64_t>("##FBXRANGE")), { 200, 500 });
     ImGui::Text("FBXLIST");
-    ImGui::ListBox("##FBXLIST", &Select, &Arr[0], Arr.size());
+    ImGui::ListBox("##FBXLIST", &Select, &Arr[0], static_cast<ImGuiID>(Arr.size()));
     ImGui::EndChildFrame();
     ImGui::SameLine();
+
+    std::string info = "특이사항 ";
 
     static float Scroll = 0.0f;
 
@@ -38,9 +38,6 @@ void GameEngineFBXWindow::OnGUI()
     {
         SelectMesh = GameEngineFBXMeshManager::GetInst().Find(Arr[Select]);
     }
-
-    // ImGui::BeginChildFrame(reinterpret_cast<ImGuiID>("##NODETREERANGE"), { 200, 500 }, ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
-
 
     ImGui::BeginChildFrame(reinterpret_cast<ImGuiID>("##NODETREERANGE"), { (Scroll * 3) + 300 , 500 }/*, ImGuiWindowFlags_HorizontalScrollbar*/);
 
@@ -111,6 +108,7 @@ void GameEngineFBXWindow::OnGUI()
                     break;
                 case fbxsdk::FbxNodeAttribute::eLODGroup:
                     TypeName += "LODGroup";
+                    info += "LODGroup";
                     break;
                 case fbxsdk::FbxNodeAttribute::eSubDiv:
                     TypeName += "SubDiv";
@@ -150,5 +148,17 @@ void GameEngineFBXWindow::OnGUI()
             1
         );
     }
+
     ImGui::EndChildFrame();
+
+    if (nullptr != SelectMesh)
+    {
+        if (ImGui::Button("MeshLoad"))
+        {
+            SelectMesh->MeshNodeCheck();
+        }
+    }
+
+    ImGui::Text(GameEngineString::AnsiToUTF8Return(info).c_str());
+
 }

@@ -181,6 +181,12 @@ void GameEngineFBX::FBXConvertScene()
 		GameEngineDebug::MsgBoxError("루트노드생성에 실패했습니다.");
 	}
 
+	fbxsdk::FbxGeometryConverter Con(Manager);
+
+	if (false == Con.Triangulate(Scene, true))
+	{
+		GameEngineDebug::MsgBoxError("삼각화에 실패했습니다.");
+	}
 
 	// RecursiveAllNode(RootNode);
 
