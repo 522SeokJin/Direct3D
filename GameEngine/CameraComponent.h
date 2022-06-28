@@ -1,8 +1,8 @@
 #pragma once
 #include "GameEngineTransformComponent.h"
 #include "GameEngineDebugRenderData.h"
-#include "Enums.h"
 #include "GameEngineLightComponent.h"
+#include "Enums.h"
 
 // 투영 타입
 enum class ProjectionMode
@@ -14,7 +14,7 @@ enum class ProjectionMode
 // 분류 : 카메라 컴포넌트
 // 용도 : 
 // 설명 : 
-class GameEngineRenderer;
+class GameEngineRendererBase;
 class CameraComponent : public GameEngineTransformComponent
 {
 	friend class CameraActor;
@@ -27,14 +27,16 @@ private:	// member Var
 	float4						CamSize_;					// 
 	float						NearZ_;						// 
 	float						FarZ_;						// 
+	float						ZoomValue;
 
 private:
 	LightsData LightData_;
 	std::list<GameEngineLightComponent*> Lights_;
-	std::map<int, std::list<GameEngineRenderer*>> RendererList_;
+	std::map<int, std::list<GameEngineRendererBase*>> RendererList_;
 
 private:
 	int DebugRenderCount_;
+	float ZoomValue_;
 	std::vector<GameEngineDebugRenderData> DebugVector_;
 	GameEngineRenderTarget* CameraBufferTarget_;
 
@@ -53,7 +55,7 @@ private:		//delete operator
 private:
 	void ClearCameraTarget();
 	void CameraTransformUpdate();
-	void Render();
+	void Render(float _DeltaTime);
 	void DebugRender();
 	void ReleaseRenderer();
 
@@ -65,19 +67,30 @@ public:
 		return CameraBufferTarget_;
 	}
 
-	inline float GetFar()
+	inline float GetZoomValue()
+	{
+		return ZoomValue_;
+	}
+
+	inline float GetFar() 
 	{
 		return FarZ_;
 	}
 
+
+
+public:
+	void CameraZoomReset();
+	void CameraZoomSetting(float _Value);
+
 public:
 	void SetProjectionMode(ProjectionMode _ProjectionMode);
-	void PushRenderer(int _Order, GameEngineRenderer* _Renderer);
+	void PushRenderer(int _Order, GameEngineRendererBase* _Renderer);
 	void PushLight(GameEngineLightComponent* _Light);
 
 public:
 	void PushDebugRender(GameEngineTransform* _Trans, CollisionType _Type);
-	void ChangeRendererGroup(int _Group, GameEngineRenderer* _Renderer);
+	void ChangeRendererGroup(int _Group, GameEngineRendererBase* _Renderer);
 
 protected:
 	void Start() override;

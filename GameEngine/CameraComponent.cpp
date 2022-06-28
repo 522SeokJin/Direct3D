@@ -1,7 +1,7 @@
 #include "PreCompile.h"
 #include "CameraComponent.h"
 #include "GameEngineTransform.h"
-#include "GameEngineRenderer.h"
+#include "GameEngineRendererBase.h"
 #include "GameEngineRenderingPipeLineManager.h"
 #include "GameEngineRenderingPipeLine.h"
 #include "GameEngineShader.h"
@@ -55,14 +55,13 @@ void CameraComponent::CameraTransformUpdate()
 	}
 }
 
-bool ZSort(GameEngineRenderer* _Left, GameEngineRenderer* _Right)
+bool ZSort(GameEngineRendererBase* _Left, GameEngineRendererBase* _Right)
 {
 	return _Left->GetTransform()->GetWorldPosition().z > _Right->GetTransform()->GetWorldPosition().z;
 }
 
-void CameraComponent::Render()
+void CameraComponent::Render(float _DeltaTime)
 {
-	// 렌더링 전 카메라의 최종행렬을 계산한다.
 	CameraTransformUpdate();
 
 	float4x4 View = GetTransform()->GetTransformData().View_;
@@ -76,9 +75,7 @@ void CameraComponent::Render()
 		LightData_.Lights[LightIndex] = Light->GetLightData();
 
 		LightData_.Lights[LightIndex].ViewLightDir *= View;
-		LightData_.Lights[LightIndex].ViewNegLightDir = 
-			-(LightData_.Lights[LightIndex].ViewLightDir);
-
+		LightData_.Lights[LightIndex].ViewNegLightDir = -(LightData_.Lights[LightIndex].ViewLightDir);
 		LightData_.Lights[LightIndex].ViewLightPosition *= View;
 		++LightIndex;
 	}
@@ -86,15 +83,17 @@ void CameraComponent::Render()
 	// 카메라 전용 렌더타겟으로 셋팅
 	CameraBufferTarget_->Setting();
 
-	for (std::pair<int, std::list<GameEngineRenderer*>> Pair : RendererList_)
+	// 렌더링 전 카메라의 최종행렬을 계산한다.
+
+	for (std::pair<int, std::list<GameEngineRendererBase*>> Pair : RendererList_)
 	{
-		std::list<GameEngineRenderer*>& Renderers = Pair.second;
+		std::list<GameEngineRendererBase*>& Renderers = Pair.second;
 
 		// 같은 그룹내에 존재하는 렌더러를 Z값에 따라서 오름차순 정렬
 		// => 겹쳐서 그려야하는 렌더러들을 z값에따라 오름차순하여 블렌딩작업하도록하기 위하여 렌더링 전에 정렬
 		Renderers.sort(ZSort);
 
-		for (GameEngineRenderer* Renderer : Renderers)
+		for (GameEngineRendererBase* Renderer : Renderers)
 		{
 			if (false == Renderer->IsUpdate())
 			{
@@ -107,7 +106,7 @@ void CameraComponent::Render()
 			// 렌더링 전에 최종행렬을 계산
 			Renderer->GetTransform()->GetTransformData().WVPCalculation();
 
-			Renderer->Render();
+			Renderer->Render(_DeltaTime);
 		}
 	}
 }
@@ -141,18 +140,18 @@ void CameraComponent::DebugRender()
 
 void CameraComponent::ReleaseRenderer()
 {
-	std::map<int, std::list<GameEngineRenderer*>>::iterator RenderMapBeginIter = RendererList_.begin();
-	std::map<int, std::list<GameEngineRenderer*>>::iterator RenderMapEndIter = RendererList_.end();
+	std::map<int, std::list<GameEngineRendererBase*>>::iterator RenderMapBeginIter = RendererList_.begin();
+	std::map<int, std::list<GameEngineRendererBase*>>::iterator RenderMapEndIter = RendererList_.end();
 	for (; RenderMapBeginIter != RenderMapEndIter; ++RenderMapBeginIter)
 	{
-		std::list<GameEngineRenderer*>& Renderers = RenderMapBeginIter->second;
+		std::list<GameEngineRendererBase*>& Renderers = RenderMapBeginIter->second;
 
-		std::list<GameEngineRenderer*>::iterator BeginIter = Renderers.begin();
-		std::list<GameEngineRenderer*>::iterator EndIter = Renderers.end();
+		std::list<GameEngineRendererBase*>::iterator BeginIter = Renderers.begin();
+		std::list<GameEngineRendererBase*>::iterator EndIter = Renderers.end();
 
 		for (; BeginIter != EndIter; )
 		{
-			GameEngineRenderer* ReleaseRenderer = *BeginIter;
+			GameEngineRendererBase* ReleaseRenderer = *BeginIter;
 
 			if (nullptr == ReleaseRenderer)
 			{
@@ -174,18 +173,18 @@ void CameraComponent::ReleaseRenderer()
 
 void CameraComponent::NextLevelMoveRenderer(CameraComponent* _NextCamera, GameEngineActor* _Actor)
 {
-	std::map<int, std::list<GameEngineRenderer*>>::iterator RenderMapBeginIter = RendererList_.begin();
-	std::map<int, std::list<GameEngineRenderer*>>::iterator RenderMapEndIter = RendererList_.end();
+	std::map<int, std::list<GameEngineRendererBase*>>::iterator RenderMapBeginIter = RendererList_.begin();
+	std::map<int, std::list<GameEngineRendererBase*>>::iterator RenderMapEndIter = RendererList_.end();
 	for (; RenderMapBeginIter != RenderMapEndIter; ++RenderMapBeginIter)
 	{
-		std::list<GameEngineRenderer*>& Renderers = RenderMapBeginIter->second;
+		std::list<GameEngineRendererBase*>& Renderers = RenderMapBeginIter->second;
 
-		std::list<GameEngineRenderer*>::iterator BeginIter = Renderers.begin();
-		std::list<GameEngineRenderer*>::iterator EndIter = Renderers.end();
+		std::list<GameEngineRendererBase*>::iterator BeginIter = Renderers.begin();
+		std::list<GameEngineRendererBase*>::iterator EndIter = Renderers.end();
 
 		for (; BeginIter != EndIter; )
 		{
-			GameEngineRenderer* ReleaseRenderer = *BeginIter;
+			GameEngineRendererBase* ReleaseRenderer = *BeginIter;
 
 			if (nullptr == ReleaseRenderer)
 			{
@@ -208,12 +207,34 @@ void CameraComponent::NextLevelMoveRenderer(CameraComponent* _NextCamera, GameEn
 	}
 }
 
+void CameraComponent::CameraZoomReset()
+{
+	if (ProjectionMode_ == ProjectionMode::Orthographic) // 직교투영일때
+	{
+		CamSize_ = GameEngineWindow::GetInst().GetSize();
+	}
+}
+
+void CameraComponent::CameraZoomSetting(float _Value)
+{
+	// 카메라가 비추는 화면 비율 조정
+	if (ProjectionMode_ == ProjectionMode::Orthographic) // 직교투영일때
+	{
+		ZoomValue_ = _Value;
+		CamSize_ = GameEngineWindow::GetInst().GetSize() * _Value;
+	}
+	else // 원근투영일때
+	{
+		// 카메라 z위치를 바꾸면 될거같긴함
+	}
+}
+
 void CameraComponent::SetProjectionMode(ProjectionMode _ProjectionMode)
 {
 	ProjectionMode_ = _ProjectionMode;
 }
 
-void CameraComponent::PushRenderer(int _Order, GameEngineRenderer* _Renderer)
+void CameraComponent::PushRenderer(int _Order, GameEngineRendererBase* _Renderer)
 {
 	RendererList_[_Order].push_back(_Renderer);
 }
@@ -263,7 +284,7 @@ void CameraComponent::PushDebugRender(GameEngineTransform* _Trans, CollisionType
 	++DebugRenderCount_;
 }
 
-void CameraComponent::ChangeRendererGroup(int _Group, GameEngineRenderer* _Renderer)
+void CameraComponent::ChangeRendererGroup(int _Group, GameEngineRendererBase* _Renderer)
 {
 	RendererList_[_Renderer->GetOrder()].remove(_Renderer);
 	_Renderer->SetOrder(_Group);

@@ -43,17 +43,18 @@ GameEngineDevice::~GameEngineDevice() // default destructer 디폴트 소멸자
 		SwapChain_ = nullptr;
 	}
 
+	if (nullptr != Context_)
+	{
+		Context_->Release();
+		Context_ = nullptr;
+	}
+
 	if (nullptr != Device_)
 	{
 		Device_->Release();
 		Device_ = nullptr;
 	}
 
-	if (nullptr != Context_)
-	{
-		Context_->Release();
-		Context_ = nullptr;
-	}
 }
 
 void GameEngineDevice::Initialize() 

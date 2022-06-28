@@ -1,26 +1,23 @@
 #pragma once
-#include "GameEngineTransformComponent.h"
+#include "GameEngineRendererBase.h"
 #include "GameEngineRenderingPipeLine.h"
 #include "GameEngineShaderResHelper.h"
 
 // 설명 : 하나의 랜더 단위를 표현합니다.
 class CameraComponent;
 class GameEngineLevel;
-class GameEngineVertexBuffer;
 class GameEngineIndexBuffer;
+class GameEngineVertexBuffer;
 class GameEngineRenderingPipeLine;
-class GameEngineRenderer : public GameEngineTransformComponent
+class GameEngineRenderer : public GameEngineRendererBase
 {
 private:
 	friend GameEngineLevel;
-	friend CameraComponent;
 
 public:
-	// constrcuter destructer
 	GameEngineRenderer();
 	~GameEngineRenderer();
 
-	// delete Function
 	GameEngineRenderer(const GameEngineRenderer& _Other) = delete;
 	GameEngineRenderer(GameEngineRenderer&& _Other) noexcept = delete;
 	GameEngineRenderer& operator=(const GameEngineRenderer& _Other) = delete;
@@ -30,8 +27,8 @@ public:
 
 	virtual void SetRenderingPipeLineSettingNext() {}
 
+
 	GameEngineShaderResHelper ShaderHelper;
-	virtual void SetRenderGroup(int _Order);
 
 	inline GameEngineRenderingPipeLine* GetGameEngineRenderingPipeLine()
 	{
@@ -45,9 +42,7 @@ public:
 	void SetMesh(GameEngineVertexBuffer* _Vtx, GameEngineIndexBuffer* _Idx);
 
 protected:
-	void Start() override;
-
-	virtual void Render();
+	void Render(float _DeltaTime) override;
 
 private:
 	GameEngineRenderingPipeLine* PipeLine_;

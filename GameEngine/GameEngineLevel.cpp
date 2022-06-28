@@ -113,10 +113,10 @@ void GameEngineLevel::Render(float _DeltaTime)
 
 	MainCameraActor_->GetCamera()->ClearCameraTarget();
 	UICameraActor_->GetCamera()->ClearCameraTarget();
-	MainCameraActor_->GetCamera()->Render();
+	MainCameraActor_->GetCamera()->Render(_DeltaTime);
 	MainCameraActor_->GetCamera()->DebugRender();
 
-	UICameraActor_->GetCamera()->Render();
+	UICameraActor_->GetCamera()->Render(_DeltaTime);
 
 	{
 		std::vector<GameEnginePostProcessRender*>& PostCameraMergePrev = PostRender["CameraMergePrev"];
@@ -277,12 +277,12 @@ void GameEngineLevel::ChangeCollisionGroup(int _Group, GameEngineCollision* _Col
 	CollisionList_[_Collision->GetOrder()].push_back(_Collision);
 }
 
-void GameEngineLevel::PushDebugRender(GameEngineTransform* _Transform, CollisionType _Type)
+void GameEngineLevel::PushDebugRender(GameEngineTransform* _Transform, CollisionType _Type) 
 {
 	MainCameraActor_->GetCamera()->PushDebugRender(_Transform, _Type);
 }
 
-void GameEngineLevel::AddTimeEvent(float _Time, std::function<void()> _Event)
+void GameEngineLevel::AddTimeEvent(float _Time, std::function<void()> _Event) 
 {
 	AddEvent_.push_back(new TimeEvent{ _Time, _Event });
 }

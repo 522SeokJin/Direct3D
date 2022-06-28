@@ -200,9 +200,6 @@
     <ClInclude Include="GameEngineTransformComponent.h">
       <Filter>Object\Component</Filter>
     </ClInclude>
-    <ClInclude Include="GameEngineRenderer.h">
-      <Filter>Object\Component\Render</Filter>
-    </ClInclude>
     <ClInclude Include="CameraComponent.h">
       <Filter>Object\Component\Camera</Filter>
     </ClInclude>
@@ -344,6 +341,15 @@
     <ClInclude Include="GameEngineFBXWindow.h">
       <Filter>Imgui\EngineWindow</Filter>
     </ClInclude>
+    <ClInclude Include="GameEngineRenderer.h">
+      <Filter>Object\Component\Render\Sub</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineFBXRenderer.h">
+      <Filter>Object\Component\Render\Sub</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineRendererBase.h">
+      <Filter>Object\Component\Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PreCompile.cpp">
@@ -434,9 +440,6 @@
     </ClCompile>
     <ClCompile Include="GameEngineTransformComponent.cpp">
       <Filter>Object\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="GameEngineRenderer.cpp">
-      <Filter>Object\Component\Render</Filter>
     </ClCompile>
     <ClCompile Include="CameraComponent.cpp">
       <Filter>Object\Component\Camera</Filter>
@@ -567,6 +570,15 @@
     </ClCompile>
     <ClCompile Include="GameEngineFBXWindow.cpp">
       <Filter>Imgui\EngineWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineRenderer.cpp">
+      <Filter>Object\Component\Render\Sub</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineFBXRenderer.cpp">
+      <Filter>Object\Component\Render\Sub</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineRendererBase.cpp">
+      <Filter>Object\Component\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

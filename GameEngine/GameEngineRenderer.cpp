@@ -4,9 +4,9 @@
 #include "GameEngineRenderingPipeLineManager.h"
 #include "GameEngineRenderingPipeLine.h"
 #include "GameEngineTransform.h"
+#include "GameEngineVertexShader.h"
 #include "GameEngineVertexBuffer.h"
 #include "GameEngineIndexBuffer.h"
-#include "GameEngineVertexShader.h"
 #include "GameEnginePixelShader.h"
 #include "CameraComponent.h"
 
@@ -24,7 +24,8 @@ GameEngineRenderer::~GameEngineRenderer()
 	}
 }
 
-void GameEngineRenderer::Render() 
+
+void GameEngineRenderer::Render(float _DeltaTime) 
 {
 	ShaderHelper.Setting();
 	PipeLine_->Rendering();
@@ -48,7 +49,6 @@ void GameEngineRenderer::SetMesh(const std::string& _Vtx, const std::string& _Id
 	PipeLine_->SetInputAssembler1VertexBufferSetting(_Vtx);
 	PipeLine_->SetInputAssembler2IndexBufferSetting(_Idx);
 }
-
 
 void GameEngineRenderer::SetMesh(GameEngineVertexBuffer* _Vtx, GameEngineIndexBuffer* _Idx)
 {
@@ -80,7 +80,7 @@ void GameEngineRenderer::SetRenderingPipeLine(const std::string& _Value)
 	{
 		PipeLine_ = FindPipeLine_->Clone();
 	}
-	else
+	else 
 	{
 		PipeLine_->Copy(FindPipeLine_);
 	}
@@ -107,18 +107,8 @@ void GameEngineRenderer::SetRenderingPipeLine(const std::string& _Value)
 	SetRenderingPipeLineSettingNext();
 }
 
-void GameEngineRenderer::Start() 
-{
-	GetLevel()->GetMainCamera()->PushRenderer(GetOrder(), this);
-}
-
 void GameEngineRenderer::Update(float _DeltaTime)
 {
 
-}
-
-void GameEngineRenderer::SetRenderGroup(int _Order)
-{
-	GetLevel()->GetMainCamera()->ChangeRendererGroup(_Order, this);
 }
 

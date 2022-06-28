@@ -43,6 +43,6 @@ protected:
 private:
 	void Start() override;
 
-	void Render() override;
+	void Render(float _DeltaTime) override;
 };
 

@@ -1,6 +1,7 @@
 #include "PreCompile.h"
 #include "GameEngineFBXWindow.h"
 #include <iostream>
+#include "GameEngineImageShotWindow.h"
 #include "GameEngineFBXMeshManager.h"
 #include "GameEngineCore.h"
 
@@ -16,6 +17,8 @@ GameEngineFBXWindow::~GameEngineFBXWindow()
 
 void GameEngineFBXWindow::OnGUI()
 {
+    
+
     std::vector<const char*> Arr;
 
     for (auto& Ref : GameEngineFBXMeshManager::GetInst().ResourcesMap)
@@ -23,8 +26,7 @@ void GameEngineFBXWindow::OnGUI()
         Arr.push_back(Ref.first.c_str());
     }
 
-    ImGui::BeginChildFrame(static_cast<ImGuiID>(
-        reinterpret_cast<uint64_t>("##FBXRANGE")), { 200, 500 });
+    ImGui::BeginChildFrame(static_cast<ImGuiID>(reinterpret_cast<uint64_t>("##FBXRANGE")), {200, 500});
     ImGui::Text("FBXLIST");
     ImGui::ListBox("##FBXLIST", &Select, &Arr[0], static_cast<ImGuiID>(Arr.size()));
     ImGui::EndChildFrame();
@@ -40,12 +42,14 @@ void GameEngineFBXWindow::OnGUI()
         SelectMesh = GameEngineFBXMeshManager::GetInst().Find(Arr[Select]);
     }
 
-    ImGui::BeginChildFrame(static_cast<ImGuiID>(
-        reinterpret_cast<uint64_t>("##NODETREERANGE"))
-        , { (Scroll * 3) + 300 , 500 }/*, ImGuiWindowFlags_HorizontalScrollbar*/);
+    // ImGui::BeginChildFrame(reinterpret_cast<ImGuiID>("##NODETREERANGE"), { 200, 500 }, ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
+
+
+    ImGui::BeginChildFrame(static_cast<ImGuiID>(reinterpret_cast<uint64_t>("##NODETREERANGE")), { (Scroll * 3) + 300 , 500 }/*, ImGuiWindowFlags_HorizontalScrollbar*/);
 
     if (nullptr != SelectMesh)
     {
+        bool Check = true;
         SelectMesh->RecursiveAllNode(
             [&] (fbxsdk::FbxNodeAttribute::EType _Type, fbxsdk::FbxNode* _Node, int _ParentReturn)
             {
@@ -151,7 +155,6 @@ void GameEngineFBXWindow::OnGUI()
             1
         );
     }
-
     ImGui::EndChildFrame();
 
     if (nullptr != SelectMesh)
@@ -194,7 +197,7 @@ void GameEngineFBXWindow::OnGUI()
                     }
                 }
             }
-            else
+            else 
             {
                 GameEngineDebug::MsgBox("매쉬노드 존재하지 않는 FBX 입니다.");
             }
@@ -203,4 +206,50 @@ void GameEngineFBXWindow::OnGUI()
 
     ImGui::Text(GameEngineString::AnsiToUTF8Return(info).c_str());
 
+
+	//if (true == ImGui::Button("Button", { 100, 20 }))
+	//{
+ //       OPENFILENAME OFN;
+ //       char filePathName[100] = "";
+ //       char lpstrFile[100] = "";
+ //       static char filter[] = "모든 파일\0*.*\0텍스트 파일\0*.txt\0fbx 파일\0*.fbx";
+
+ //       memset(&OFN, 0, sizeof(OPENFILENAME));
+ //       OFN.lStructSize = sizeof(OPENFILENAME);
+ //       OFN.hwndOwner = nullptr;
+ //       OFN.lpstrFilter = filter;
+ //       OFN.lpstrFile = lpstrFile;
+ //       OFN.nMaxFile = 100;
+ //       OFN.lpstrInitialDir = ".";
+
+ //       char PrevDir[256] = {0};
+ //       GetCurrentDirectoryA(256, PrevDir);
+
+ //       if (GetOpenFileName(&OFN) != 0) {
+ //           // wsprintf(filePathName, "%s 파일을 열겠습니까?", OFN.lpstrFile);
+ //           // MessageBox(nullptr, filePathName, "열기 선택", MB_OK);
+ //           // OFN.lpstrFile;
+
+ //           // FBXMesh.Reset();
+ //           // FBXMesh.Load(OFN.lpstrFile);
+ //           SetCurrentDirectoryA(PrevDir);
+ //       }
+ //   }
+
+    //if (nullptr != FBXMesh.GetRootNode())
+    //{
+    //    
+
+    //    if (ImGui::TreeNode(FBXMesh.GetName().c_str()))
+    //    {
+    //        if (ImGui::TreeNode("bbbb"))
+    //        {
+    //            ImGui::TreePop();
+    //        }
+
+    //        ImGui::TreePop();
+    //    }
+
+    //   
+    //}
 }

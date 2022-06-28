@@ -71,8 +71,9 @@ void GameEngineCore::EngineDestroy()
 	GameEngineInput::Destroy();
 	GameEngineTime::Destroy();
 	GameEngineGUI::Destroy();
-	GameEngineDevice::Destroy();
+
 	GameEngineWindow::Destroy();
+	GameEngineDevice::Destroy();
 }
 
 /// <summary>

@@ -88,6 +88,7 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="GameEngineFBXMeshManager.h" />
+    <ClInclude Include="GameEngineFBXRenderer.h" />
     <ClInclude Include="GameEngineFBXWindow.h" />
     <ClInclude Include="GameEngineFolderTexture.h" />
     <ClInclude Include="GameEngineFolderTextureManager.h" />
@@ -155,6 +156,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="GameEngineRendererBase.h" />
     <ClInclude Include="GameEngineRenderingPipeLine.h">
       <SubType>
       </SubType>
@@ -328,6 +330,7 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="GameEngineFBXMeshManager.cpp" />
+    <ClCompile Include="GameEngineFBXRenderer.cpp" />
     <ClCompile Include="GameEngineFBXWindow.cpp" />
     <ClCompile Include="GameEngineFolderTexture.cpp" />
     <ClCompile Include="GameEngineFolderTextureManager.cpp" />
@@ -395,6 +398,7 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="GameEngineRendererBase.cpp" />
     <ClCompile Include="GameEngineRenderingPipeLine.cpp">
       <SubType>
       </SubType>
