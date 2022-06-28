@@ -122,7 +122,7 @@ struct FbxExMeshInfo
 
 	bool bIsLodGroup;
 	std::string LODGroup;
-	int LODLevel;
+	int VertexOrder;
 	int MorphNum;
 
 	FbxExMeshInfo()
@@ -138,7 +138,7 @@ struct FbxExMeshInfo
 		SkeletonElemNum = 0;
 		bIsLodGroup = false;
 		LODGroup = "";
-		LODLevel = 0;
+		VertexOrder = 0;
 		MorphNum = 0;
 	}
 };
@@ -153,6 +153,11 @@ public:
 	void Load(const std::string& _Path);
 	void MeshLoad();
 	void CreateRenderingBuffer();
+
+	std::map<int, FbxMeshSet>& GetMeshSet()
+	{
+		return AllMeshMap;
+	}
 
 protected:
 	GameEngineFBXMesh(const GameEngineFBXMesh& _other) = delete; 
@@ -194,6 +199,6 @@ private:
 	// int 0 lod 매쉬
 	// int 1 lod 매쉬
 	// int 2 lod 매쉬
-	std::map<int, FbxMeshSet> MeshLodMap;
+	std::map<int, FbxMeshSet> AllMeshMap;
 };
 

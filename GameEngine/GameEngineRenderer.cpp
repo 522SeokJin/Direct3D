@@ -4,6 +4,8 @@
 #include "GameEngineRenderingPipeLineManager.h"
 #include "GameEngineRenderingPipeLine.h"
 #include "GameEngineTransform.h"
+#include "GameEngineVertexBuffer.h"
+#include "GameEngineIndexBuffer.h"
 #include "GameEngineVertexShader.h"
 #include "GameEnginePixelShader.h"
 #include "CameraComponent.h"
@@ -22,7 +24,6 @@ GameEngineRenderer::~GameEngineRenderer()
 	}
 }
 
-
 void GameEngineRenderer::Render() 
 {
 	ShaderHelper.Setting();
@@ -31,6 +32,35 @@ void GameEngineRenderer::Render()
 	PipeLine_->Reset();
 }
 
+void GameEngineRenderer::SetMesh(const std::string& _Value)
+{
+	SetMesh(_Value, _Value);
+}
+
+void GameEngineRenderer::SetMesh(const std::string& _Vtx, const std::string& _Idx)
+{
+	if (nullptr == PipeLine_)
+	{
+		GameEngineDebug::MsgBoxError("랜더링 파이프라인을 먼저 세팅해주세요." + _Vtx);
+		return;
+	}
+
+	PipeLine_->SetInputAssembler1VertexBufferSetting(_Vtx);
+	PipeLine_->SetInputAssembler2IndexBufferSetting(_Idx);
+}
+
+
+void GameEngineRenderer::SetMesh(GameEngineVertexBuffer* _Vtx, GameEngineIndexBuffer* _Idx)
+{
+	if (nullptr == PipeLine_)
+	{
+		GameEngineDebug::MsgBoxError("랜더링 파이프라인을 먼저 세팅해주세요." + _Vtx->GetName());
+		return;
+	}
+
+	PipeLine_->SetInputAssembler1VertexBufferSetting(_Vtx);
+	PipeLine_->SetInputAssembler2IndexBufferSetting(_Idx);
+}
 
 void GameEngineRenderer::SetRenderingPipeLine(const std::string& _Value)
 {
@@ -92,19 +122,3 @@ void GameEngineRenderer::SetRenderGroup(int _Order)
 	GetLevel()->GetMainCamera()->ChangeRendererGroup(_Order, this);
 }
 
-void GameEngineRenderer::SetMesh(const std::string& _Value)
-{
-	SetMesh(_Value, _Value);
-}
-
-void GameEngineRenderer::SetMesh(const std::string& _Vtx, const std::string& _Idx)
-{
-	if (nullptr == PipeLine_)
-	{
-		GameEngineDebug::MsgBoxError("랜더링 파이프라인을 먼저 세팅해주세요." + _Vtx);
-		return;
-	}
-
-	PipeLine_->SetInputAssembler1VertexBufferSetting(_Vtx);
-	PipeLine_->SetInputAssembler2IndexBufferSetting(_Idx);
-}

@@ -2,6 +2,7 @@
 #include "GameEngineFBXWindow.h"
 #include <iostream>
 #include "GameEngineFBXMeshManager.h"
+#include "GameEngineCore.h"
 
 
 GameEngineFBXWindow::GameEngineFBXWindow()
@@ -159,6 +160,44 @@ void GameEngineFBXWindow::OnGUI()
         {
             SelectMesh->MeshLoad();
             SelectMesh->CreateRenderingBuffer();
+        }
+
+        if (ImGui::Button("MeshCreate"))
+        {
+            if (0 == SelectMesh->GetMeshSet().size())
+            {
+                SelectMesh->MeshLoad();
+                SelectMesh->CreateRenderingBuffer();
+            }
+
+            if (0 != SelectMesh->GetMeshSet().size())
+            {
+                for (size_t MeshSetIndex = 0; MeshSetIndex < SelectMesh->GetMeshSet().size(); MeshSetIndex++)
+                {
+                    for (size_t VertexBufferIndex = 0; VertexBufferIndex < SelectMesh->GetMeshSet()[MeshSetIndex].GameEngineVertexBuffers.size(); VertexBufferIndex++)
+                    {
+                        for (size_t IndexBufferIndex = 0; IndexBufferIndex < SelectMesh->GetMeshSet()[MeshSetIndex].GameEngineIndexBuffers[VertexBufferIndex].size(); IndexBufferIndex++)
+                        {
+
+                            GameEngineVertexBuffer* VertexBuffer = SelectMesh->GetMeshSet()[MeshSetIndex].GameEngineVertexBuffers[VertexBufferIndex];
+                            GameEngineIndexBuffer* IndexBuffer = SelectMesh->GetMeshSet()[MeshSetIndex].GameEngineIndexBuffers[VertexBufferIndex][IndexBufferIndex];
+
+                            GameEngineActor* NewActor = GameEngineCore::CurrentLevel()->CreateActor<GameEngineActor>();
+
+                            GameEngineRenderer* Renderer = NewActor->CreateTransformComponent<GameEngineRenderer>(NewActor->GetTransform());
+                            Renderer->SetRenderingPipeLine("Color");
+                            Renderer->SetMesh(VertexBuffer, IndexBuffer);
+                            Renderer->GetTransform()->SetLocalScaling({ 10.0f, 10.0f, 10.0f });
+                            Renderer->GetTransform()->SetLocalPosition({ 0.0f, 0.0f, 0.0f });
+                            Renderer->ShaderHelper.SettingConstantBufferSet("ResultColor", float4(1.0f, 0.0f, 0.0f));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                GameEngineDebug::MsgBox("매쉬노드 존재하지 않는 FBX 입니다.");
+            }
         }
     }
 

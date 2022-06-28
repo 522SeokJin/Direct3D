@@ -6,6 +6,8 @@
 // 설명 : 하나의 랜더 단위를 표현합니다.
 class CameraComponent;
 class GameEngineLevel;
+class GameEngineVertexBuffer;
+class GameEngineIndexBuffer;
 class GameEngineRenderingPipeLine;
 class GameEngineRenderer : public GameEngineTransformComponent
 {
@@ -40,6 +42,7 @@ public:
 
 	void SetMesh(const std::string& _Value);
 
+	void SetMesh(GameEngineVertexBuffer* _Vtx, GameEngineIndexBuffer* _Idx);
 
 protected:
 	void Start() override;

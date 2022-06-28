@@ -10,13 +10,13 @@
 // Ό³Έν : 
 class GameEngineBlend;
 class GameEngineShader;
-class GameEngineDepthStencil;
-class GameEngineConstantBuffer;
+class GameEngineRasterizer;
+class GameEnginePixelShader;
 class GameEngineIndexBuffer;
 class GameEngineVertexBuffer;
+class GameEngineDepthStencil;
 class GameEngineVertexShader;
-class GameEnginePixelShader;
-class GameEngineRasterizer;
+class GameEngineConstantBuffer;
 class GameEngineRenderingPipeLine : public GameEngineObjectNameBase
 {
 private:	// member Var
@@ -63,10 +63,12 @@ public:
 	//void SetInputAssembler1InputLayOutSetting(const std::string& _Name);
 
 	void SetInputAssembler1VertexBufferSetting(const std::string& _Name);
+	void SetInputAssembler1VertexBufferSetting(GameEngineVertexBuffer* _Buffer);
 
 	void SetVertexShader(const std::string& _Name);
 
 	void SetInputAssembler2IndexBufferSetting(const std::string& _Name);
+	void SetInputAssembler2IndexBufferSetting(GameEngineIndexBuffer* _Buffer);
 
 	void SetInputAssembler2TopologySetting(D3D11_PRIMITIVE_TOPOLOGY Topology_);
 

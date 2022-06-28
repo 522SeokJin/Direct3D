@@ -192,7 +192,7 @@ void GameEngineFBXMesh::MeshNodeCheck()
 
 	for (auto& Data : LodCheckMap)
 	{
-		Data.second->LODLevel = Count;
+		Data.second->VertexOrder = Count;
 		++Count;
 	}
 }
@@ -398,12 +398,12 @@ void GameEngineFBXMesh::VertexBufferCheck()
 		fbxsdk::FbxNode* pMeshNode = meshInfo.Mesh->GetNode();
 		fbxsdk::FbxMesh* pMesh = meshInfo.Mesh;
 
-		if (MeshLodMap.end() == MeshLodMap.find(meshInfo.LODLevel))
+		if (AllMeshMap.end() == AllMeshMap.find(meshInfo.VertexOrder))
 		{
-			MeshLodMap.insert(std::make_pair(meshInfo.LODLevel, FbxMeshSet()));
+			AllMeshMap.insert(std::make_pair(meshInfo.VertexOrder, FbxMeshSet()));
 		}
 
-		FbxMeshSet& DrawMesh = MeshLodMap[meshInfo.LODLevel];
+		FbxMeshSet& DrawMesh = AllMeshMap[meshInfo.VertexOrder];
 
 		if (DrawMesh.MapWI.end() == DrawMesh.MapWI.find(pMesh))
 		{
@@ -411,7 +411,7 @@ void GameEngineFBXMesh::VertexBufferCheck()
 		}
 
 		DrawMesh.IsLod = meshInfo.bIsLodGroup;
-		DrawMesh.IsLodLv = meshInfo.LODLevel;
+		DrawMesh.IsLodLv = meshInfo.VertexOrder;
 		DrawMesh.Vertexs.push_back(std::vector<GameEngineVertex>());
 		DrawMesh.Indexs.push_back(std::vector<std::vector<UINT>>());
 		std::vector<GameEngineVertex>& VtxData = DrawMesh.Vertexs[DrawMesh.Vertexs.size() - 1];
@@ -541,7 +541,7 @@ void GameEngineFBXMesh::CreateRenderingBuffer()
 
 void GameEngineFBXMesh::CreateVertexBuffer()
 {
-	for (auto& Data : MeshLodMap)
+	for (auto& Data : AllMeshMap)
 	{
 		for (size_t i = 0; i < Data.second.Vertexs.size(); i++)
 		{
@@ -554,7 +554,7 @@ void GameEngineFBXMesh::CreateVertexBuffer()
 
 void GameEngineFBXMesh::CreateIndexBuffer()
 {
-	for (auto& Data : MeshLodMap)
+	for (auto& Data : AllMeshMap)
 	{
 		for (size_t i = 0; i < Data.second.Indexs.size(); i++)
 		{

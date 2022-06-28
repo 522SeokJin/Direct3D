@@ -72,6 +72,28 @@ void GameEngineRenderingPipeLine::SetInputAssembler1VertexBufferSetting(const st
 	}
 }
 
+void GameEngineRenderingPipeLine::SetInputAssembler1VertexBufferSetting(GameEngineVertexBuffer* _Buffer)
+{
+	if (nullptr == _Buffer)
+	{
+		GameEngineDebug::MsgBoxError("존재하지 않는 버텍스 버퍼를 세팅하려고 했습니다.");
+		return;
+	}
+
+	VertexBuffer_ = _Buffer;
+}
+
+void GameEngineRenderingPipeLine::SetInputAssembler2IndexBufferSetting(GameEngineIndexBuffer* _Buffer)
+{
+	if (nullptr == _Buffer)
+	{
+		GameEngineDebug::MsgBoxError("존재하지 않는 인덱스 버퍼를 세팅하려고 했습니다.");
+		return;
+	}
+
+	IndexBuffer_ = _Buffer;
+}
+
 //void GameEngineRenderingPipeLine::SetInputAssembler1InputLayOutSetting(const std::string& _Name) 
 //{
 //	InputLayOutVertexShader_ = GameEngineVertexShaderManager::GetInst().Find(_Name);
