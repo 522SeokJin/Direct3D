@@ -172,11 +172,11 @@ void GameEngineFBXWindow::OnGUI()
 
             if (0 != SelectMesh->GetMeshSet().size())
             {
-                for (size_t MeshSetIndex = 0; MeshSetIndex < SelectMesh->GetMeshSet().size(); MeshSetIndex++)
+                for (int MeshSetIndex = 0; MeshSetIndex < SelectMesh->GetMeshSet().size(); MeshSetIndex++)
                 {
-                    for (size_t VertexBufferIndex = 0; VertexBufferIndex < SelectMesh->GetMeshSet()[MeshSetIndex].GameEngineVertexBuffers.size(); VertexBufferIndex++)
+                    for (int VertexBufferIndex = 0; VertexBufferIndex < SelectMesh->GetMeshSet()[MeshSetIndex].GameEngineVertexBuffers.size(); VertexBufferIndex++)
                     {
-                        for (size_t IndexBufferIndex = 0; IndexBufferIndex < SelectMesh->GetMeshSet()[MeshSetIndex].GameEngineIndexBuffers[VertexBufferIndex].size(); IndexBufferIndex++)
+                        for (int IndexBufferIndex = 0; IndexBufferIndex < SelectMesh->GetMeshSet()[MeshSetIndex].GameEngineIndexBuffers[VertexBufferIndex].size(); IndexBufferIndex++)
                         {
 
                             GameEngineVertexBuffer* VertexBuffer = SelectMesh->GetMeshSet()[MeshSetIndex].GameEngineVertexBuffers[VertexBufferIndex];

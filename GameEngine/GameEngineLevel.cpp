@@ -36,6 +36,8 @@ CameraComponent* GameEngineLevel::GetUICamera()
 	return UICameraActor_->GetCamera();
 }
 GameEngineLevel::GameEngineLevel()
+	: MainCameraActor_(nullptr)
+	, UICameraActor_(nullptr)
 {
 	PostRender["CameraMergePrev"];
 	PostRender["CameraMergeNext"];
@@ -43,7 +45,7 @@ GameEngineLevel::GameEngineLevel()
 
 GameEngineLevel::~GameEngineLevel()
 {
-	AllClear();
+	ClearAll();
 }
 
 void GameEngineLevel::Init()
@@ -214,6 +216,7 @@ void GameEngineLevel::Release(float _DeltaTime)
 				if (nullptr == ReleaseActor)
 				{
 					GameEngineDebug::MsgBoxError("Release Actor Is Nullptr!!!!");
+					return;
 				}
 
 				ReleaseActor->ComponentRelease();
@@ -274,12 +277,12 @@ void GameEngineLevel::ChangeCollisionGroup(int _Group, GameEngineCollision* _Col
 	CollisionList_[_Collision->GetOrder()].push_back(_Collision);
 }
 
-void GameEngineLevel::PushDebugRender(GameEngineTransform* _Transform, CollisionType _Type) 
+void GameEngineLevel::PushDebugRender(GameEngineTransform* _Transform, CollisionType _Type)
 {
 	MainCameraActor_->GetCamera()->PushDebugRender(_Transform, _Type);
 }
 
-void GameEngineLevel::AddTimeEvent(float _Time, std::function<void()> _Event) 
+void GameEngineLevel::AddTimeEvent(float _Time, std::function<void()> _Event)
 {
 	AddEvent_.push_back(new TimeEvent{ _Time, _Event });
 }
@@ -316,7 +319,7 @@ void GameEngineLevel::TimeEventUpdate()
 	}
 }
 
-void GameEngineLevel::AllClear()
+void GameEngineLevel::ClearAll()
 {
 	for (auto& Event : AllEvent_)
 	{

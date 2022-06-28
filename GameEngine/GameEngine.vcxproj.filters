@@ -79,9 +79,6 @@
     <Filter Include="Object\Contents">
       <UniqueIdentifier>{73ba42bb-b048-4e84-b1dd-29d8e3172d22}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lib\FW1Font">
-      <UniqueIdentifier>{0c80c47d-8799-439f-9195-86c9ca35252c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Imgui">
       <UniqueIdentifier>{87bbd737-da67-4980-8363-b527afd74831}</UniqueIdentifier>
     </Filter>
@@ -108,6 +105,9 @@
     </Filter>
     <Filter Include="Resources\04FBX">
       <UniqueIdentifier>{a0b9dba7-08d4-41f9-a787-d8e0b7e7ec2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\FW1Font">
+      <UniqueIdentifier>{0c80c47d-8799-439f-9195-86c9ca35252c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -605,6 +605,9 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\ThirdParty\x64\Release\FBX\zlib-mt.lib">
       <Filter>Lib\FBX</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\ThirdParty\x64\Debug\DirectXTex\DirectXTex.pdb">
+      <Filter>Lib\DirectXTex</Filter>
     </CopyFileToFolders>
   </ItemGroup>
 </Project>

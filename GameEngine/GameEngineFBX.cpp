@@ -1,10 +1,16 @@
 #include "PreCompile.h"
 #include "GameEngineFBX.h"
 
+// 릴리즈용 라이브러리
 #pragma comment(lib, "libfbxsdk.lib")
 
 
 GameEngineFBX::GameEngineFBX()
+	: Manager(nullptr)
+	, IOSetting(nullptr)
+	, Importer(nullptr)
+	, Scene(nullptr)
+	, RootNode(nullptr)
 {
 }
 
