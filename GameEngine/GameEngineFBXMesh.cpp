@@ -11,6 +11,67 @@ GameEngineFBXMesh::~GameEngineFBXMesh()
 
 }
 
+float4x4 GameEngineFBXMesh::FbxMatTofloat4x4(const fbxsdk::FbxAMatrix& _BaseTrans)
+{
+	float4x4 Mat;
+
+	for (int y = 0; y < 4; y++)
+	{
+		for (int x = 0; x < 4; x++)
+		{
+			Mat.Arr2D[y][x] = (float)_BaseTrans.Get(y, x);
+		}
+	}
+
+	return Mat;
+}
+
+fbxsdk::FbxAMatrix GameEngineFBXMesh::float4x4ToFbxAMatrix(const float4x4& _MATRIX)
+{
+	fbxsdk::FbxAMatrix mat;
+	for (int y = 0; y < 4; y++)
+	{
+		for (int x = 0; x < 4; x++)
+		{
+			mat.mData[y].mData[x] = _MATRIX.Arr2D[y][x];
+		}
+	}
+
+	return mat;
+}
+
+float4 GameEngineFBXMesh::FbxVecTofloat4(const fbxsdk::FbxVector4& _BaseVector)
+{
+	float4 Vec;
+	Vec.Arr1D[0] = (float)_BaseVector.mData[0];
+	Vec.Arr1D[1] = (float)_BaseVector.mData[1];
+	Vec.Arr1D[2] = (float)_BaseVector.mData[2];
+	Vec.Arr1D[3] = (float)_BaseVector.mData[3];
+
+	return Vec;
+
+}
+
+float4 GameEngineFBXMesh::FbxVecToTransform(const fbxsdk::FbxVector4& _BaseVector)
+{
+	float4 Vec;
+	Vec.Arr1D[0] = (float)_BaseVector.mData[0];
+	Vec.Arr1D[1] = (float)_BaseVector.mData[1];
+	Vec.Arr1D[2] = -(float)_BaseVector.mData[2];
+	Vec.Arr1D[3] = (float)_BaseVector.mData[3];
+	return Vec;
+}
+
+float4 GameEngineFBXMesh::FbxQuaternionTofloat4(const fbxsdk::FbxQuaternion& _BaseQ)
+{
+	float4 Vec;
+	Vec.Arr1D[0] = (float)_BaseQ.mData[0];
+	Vec.Arr1D[1] = (float)_BaseQ.mData[1];
+	Vec.Arr1D[2] = -(float)_BaseQ.mData[2];
+	Vec.Arr1D[3] = -(float)_BaseQ.mData[3];
+	return Vec;
+}
+
 void GameEngineFBXMesh::Load(const std::string& _Path)
 {
 	if (false == CreateFBXSystemInitialize(_Path))
@@ -21,7 +82,6 @@ void GameEngineFBXMesh::Load(const std::string& _Path)
 
 	FBXConvertScene();
 }
-
 
 fbxsdk::FbxNode* GameEngineFBXMesh::RecursiveFindParentLodGroup(fbxsdk::FbxNode* parentNode)
 {
@@ -82,53 +142,430 @@ void GameEngineFBXMesh::MeshNodeCheck()
 
 			if (Info.Mesh->GetDeformerCount(FbxDeformer::eSkin) > 0)
 			{
-				// meshInfo.bIsSkelMesh = true;
+				Info.bIsSkelMesh = true;
+				Info.MorphNum = Info.Mesh->GetShapeCount();
+				fbxsdk::FbxSkin* Skin = (fbxsdk::FbxSkin*)Info.Mesh->GetDeformer(0, FbxDeformer::eSkin);
+				int ClusterCount = Skin->GetClusterCount();
+				fbxsdk::FbxNode* Link = NULL;
+				for (int ClusterId = 0; ClusterId < ClusterCount; ++ClusterId)
+				{
+					fbxsdk::FbxCluster* Cluster = Skin->GetCluster(ClusterId);
+					// 서로 연결된 
+					Link = Cluster->GetLink();
+					while (Link && Link->GetParent() && Link->GetParent()->GetSkeleton())
+					{
+						Link = Link->GetParent();
+					}
 
-				int a = 0;
+					if (Link != NULL)
+					{
+						break;
+					}
+				}
 
-				//m_SceneInfo.SkinnedMeshNum++;
-				//meshInfo.bIsSkelMesh = true;
-				//meshInfo.MorphNum = mesh->GetShapeCount();
-				//fbxsdk::FbxSkin* Skin = (fbxsdk::FbxSkin*)mesh->GetDeformer(0, FbxDeformer::eSkin);
-				//int ClusterCount = Skin->GetClusterCount();
-				//fbxsdk::FbxNode* Link = NULL;
-				//for (int ClusterId = 0; ClusterId < ClusterCount; ++ClusterId)
-				//{
-				//	fbxsdk::FbxCluster* Cluster = Skin->GetCluster(ClusterId);
-				//	Link = Cluster->GetLink();
-				//	while (Link && Link->GetParent() && Link->GetParent()->GetSkeleton())
-				//	{
-				//		Link = Link->GetParent();
-				//	}
+				Info.SkeletonRoot = nullptr != Link ? GameEngineString::UTF8ToAnsiReturn(Link->GetName()) : "None";
+				Info.SkeletonElemNum = nullptr != Link ? Link->GetChildCount(true) : 0;
 
-				//	if (Link != NULL)
-				//	{
-				//		break;
-				//	}
-				//}
-
-				//meshInfo.SkeletonRoot = nullptr != Link ? GameEngineString::ConvertMultiByteString(Link->GetName()) : L"None";
-				//meshInfo.SkeletonElemNum = nullptr != Link ? Link->GetChildCount(true) : 0;
-
-				//if (nullptr != Link)
-				//{
-				//	fbxsdk::FbxTimeSpan AnimTimeSpan(fbxsdk::FBXSDK_TIME_INFINITE, fbxsdk::FBXSDK_TIME_MINUS_INFINITE);
-				//	Link->GetAnimationInterval(AnimTimeSpan);
-				//	GlobalTimeSpan.UnionAssignment(AnimTimeSpan);
-				//}
 			}
 			else
 			{
-				//m_SceneInfo.NonSkinnedMeshNum++;
-				//meshInfo.bIsSkelMesh = false;
-				//meshInfo.SkeletonRoot = L"";
+				Info.bIsSkelMesh = false;
+				Info.SkeletonRoot = "";
 			}
 		}
 	}
 
-	int a = 0;
+	// Lod체크	int : 버텍스점 갯수로 정렬
+	std::multimap<int, FbxExMeshInfo*> LodCheckMap;
+	// 다 끝났어
+	for (int i = 0; i < MeshInfos.size(); i++)
+	{
+		if (false == MeshInfos[i].bIsLodGroup)
+		{
+			continue;
+		}
+
+		LodCheckMap.insert(std::make_pair(MeshInfos[i].VertexNum, &MeshInfos[i]));
+	}
+
+	int Count = 0;
+
+	for (auto& Data : LodCheckMap)
+	{
+		Data.second->LODLevel = Count;
+		++Count;
+	}
 }
 
-void GameEngineFBXMesh::Initialize()
+void GameEngineFBXMesh::MeshLoad()
 {
+	// 이건 점을 얻어올수 있는 노드들을 조사한거고
+	MeshNodeCheck();
+	// 조사한 정보를 바탕으로 진짜 점들을 만들어 낸다.
+	VertexBufferCheck();
+}
+
+fbxsdk::FbxAMatrix GameEngineFBXMesh::ComputeTotalMatrix(fbxsdk::FbxNode* Node)
+{
+	fbxsdk::FbxAMatrix Geometry;
+	fbxsdk::FbxVector4 Translation, Rotation, Scaling;
+	Translation = Node->GetGeometricTranslation(fbxsdk::FbxNode::eSourcePivot);
+	Rotation = Node->GetGeometricRotation(fbxsdk::FbxNode::eSourcePivot);
+	Scaling = Node->GetGeometricScaling(fbxsdk::FbxNode::eSourcePivot);
+	Geometry.SetT(Translation);
+	Geometry.SetR(Rotation);
+	Geometry.SetS(Scaling);
+
+	fbxsdk::FbxAMatrix& GlobalTransform = Scene->GetAnimationEvaluator()->GetNodeGlobalTransform(Node);
+	return GlobalTransform * Geometry;
+}
+
+bool GameEngineFBXMesh::IsOddNegativeScale(const fbxsdk::FbxAMatrix& TotalMatrix)
+{
+	fbxsdk::FbxVector4 Scale = TotalMatrix.GetS();
+	int NegativeNum = 0;
+
+	if (Scale[0] < 0) NegativeNum++;
+	if (Scale[1] < 0) NegativeNum++;
+	if (Scale[2] < 0) NegativeNum++;
+
+	return NegativeNum == 1 || NegativeNum == 3;
+}
+
+void GameEngineFBXMesh::LoadBinormal(fbxsdk::FbxMesh* _Mesh, fbxsdk::FbxAMatrix _MeshMatrix, std::vector<GameEngineVertex>& _ArrVtx, int VtxId, int _Index)
+{
+	int iCount = _Mesh->GetElementBinormalCount();
+
+	if (0 == iCount)
+	{
+		return;
+
+	}
+
+	FbxGeometryElementBinormal* pElement = _Mesh->GetElementBinormal();
+	int iDataIndex = VtxId;
+
+	if (pElement->GetMappingMode() == FbxGeometryElement::eByPolygonVertex)
+	{
+		if (FbxGeometryElement::eIndexToDirect == pElement->GetReferenceMode())
+		{
+			iDataIndex = pElement->GetIndexArray().GetAt(VtxId);
+		}
+		else
+		{
+			iDataIndex = VtxId;
+		}
+	}
+
+	else if (pElement->GetMappingMode() == FbxGeometryElement::eByControlPoint)
+	{
+		if (FbxGeometryElement::eDirect == pElement->GetReferenceMode())
+		{
+			iDataIndex = _Index;
+		}
+		else if (FbxGeometryElement::eIndexToDirect == pElement->GetReferenceMode())
+		{
+			iDataIndex = pElement->GetIndexArray().GetAt(_Index);
+		}
+		else {
+			GameEngineDebug::MsgBoxError("맵핑 방식중 처리할수 없는 방식입니다.");
+		}
+	}
+
+	FbxVector4 BiNormal = pElement->GetDirectArray().GetAt(iDataIndex);
+
+	fbxsdk::FbxAMatrix conversionMeshMatrix = _MeshMatrix.Transpose();
+	BiNormal = conversionMeshMatrix.MultT(BiNormal);
+
+
+	_ArrVtx[_Index].BINORMAL.x = (float)BiNormal.mData[0];
+	_ArrVtx[_Index].BINORMAL.y = (float)BiNormal.mData[1];
+	_ArrVtx[_Index].BINORMAL.z = -(float)BiNormal.mData[2];
+	_ArrVtx[_Index].BINORMAL.w = (float)BiNormal.mData[3];
+	_ArrVtx[_Index].BINORMAL.Normalize3D();
+}
+
+void GameEngineFBXMesh::LoadTangent(fbxsdk::FbxMesh* _Mesh, fbxsdk::FbxAMatrix _MeshMatrix, std::vector<GameEngineVertex>& _ArrVtx, int VtxId, int _Index)
+{
+	int iCount = _Mesh->GetElementTangentCount();
+
+	if (0 == iCount)
+	{
+		return;
+	}
+	FbxGeometryElementTangent* pElement = _Mesh->GetElementTangent();
+	int iDataIndex = VtxId;
+
+	if (pElement->GetMappingMode() == FbxGeometryElement::eByPolygonVertex)
+	{
+		if (FbxGeometryElement::eIndexToDirect == pElement->GetReferenceMode())
+		{
+			iDataIndex = pElement->GetIndexArray().GetAt(VtxId);
+		}
+		else
+		{
+			iDataIndex = VtxId;
+		}
+	}
+	else if (pElement->GetMappingMode() == FbxGeometryElement::eByControlPoint)
+	{
+		if (FbxGeometryElement::eDirect == pElement->GetReferenceMode())
+		{
+			iDataIndex = _Index;
+		}
+		else if (FbxGeometryElement::eIndexToDirect == pElement->GetReferenceMode())
+		{
+			iDataIndex = pElement->GetIndexArray().GetAt(_Index);
+		}
+		else {
+			GameEngineDebug::MsgBoxError("맵핑 방식중 처리할수 없는 방식입니다.");
+		}
+	}
+
+	FbxVector4 Tangent = pElement->GetDirectArray().GetAt(iDataIndex);
+
+
+	fbxsdk::FbxAMatrix conversionMeshMatrix = _MeshMatrix.Transpose();
+	Tangent = conversionMeshMatrix.MultT(Tangent);
+
+
+	_ArrVtx[_Index].TANGENT.x = (float)Tangent.mData[0];
+	_ArrVtx[_Index].TANGENT.y = (float)Tangent.mData[1];
+	_ArrVtx[_Index].TANGENT.z = -(float)Tangent.mData[2];
+	_ArrVtx[_Index].TANGENT.w = (float)Tangent.mData[3];
+	_ArrVtx[_Index].TANGENT.Normalize3D();
+}
+
+void GameEngineFBXMesh::LoadNormal(fbxsdk::FbxMesh* _Mesh, fbxsdk::FbxAMatrix _MeshMatrix, std::vector<GameEngineVertex>& _ArrVtx, int VtxId, int _Index)
+{
+	int iCount = _Mesh->GetElementNormalCount();
+
+	if (0 == iCount)
+	{
+		GameEngineDebug::MsgBoxError("GetElementNormalCount가 여러개 입니다.");
+	}
+
+
+	FbxGeometryElementNormal* pElement = _Mesh->GetElementNormal();
+	int iDataIndex = VtxId;
+
+	if (pElement->GetMappingMode() == FbxGeometryElement::eByPolygonVertex)
+	{
+		if (FbxGeometryElement::eIndexToDirect == pElement->GetReferenceMode())
+		{
+			iDataIndex = pElement->GetIndexArray().GetAt(VtxId);
+		}
+		else
+		{
+			iDataIndex = VtxId;
+		}
+	}
+	else if (pElement->GetMappingMode() == FbxGeometryElement::eByControlPoint)
+	{
+		if (FbxGeometryElement::eDirect == pElement->GetReferenceMode())
+		{
+			iDataIndex = _Index;
+		}
+		else if (FbxGeometryElement::eIndexToDirect == pElement->GetReferenceMode())
+		{
+			iDataIndex = pElement->GetIndexArray().GetAt(_Index);
+		}
+		else {
+			GameEngineDebug::MsgBoxError("맵핑 방식중 처리할수 없는 방식입니다.");
+		}
+	}
+
+	FbxVector4 Normal = pElement->GetDirectArray().GetAt(iDataIndex);
+
+	fbxsdk::FbxAMatrix conversionMeshMatrix = _MeshMatrix.Transpose();
+	Normal = conversionMeshMatrix.MultT(Normal);
+
+	_ArrVtx[_Index].NORMAL.x = (float)Normal.mData[0];
+	_ArrVtx[_Index].NORMAL.y = (float)Normal.mData[1];
+	_ArrVtx[_Index].NORMAL.z = -(float)Normal.mData[2];
+	_ArrVtx[_Index].NORMAL.w = (float)Normal.mData[3];
+	// _ArrVtx[_Index].Normal.w = 0.0f;
+	_ArrVtx[_Index].NORMAL.Normalize3D();
+}
+
+
+void GameEngineFBXMesh::VertexBufferCheck()
+{
+	size_t meshInfoSize = MeshInfos.size();
+	for (size_t meshInfoIndex = 0; meshInfoIndex < meshInfoSize; ++meshInfoIndex)
+	{
+		FbxExMeshInfo& meshInfo = MeshInfos.at(meshInfoIndex);
+		fbxsdk::FbxNode* pMeshNode = meshInfo.Mesh->GetNode();
+		fbxsdk::FbxMesh* pMesh = meshInfo.Mesh;
+
+		if (MeshLodMap.end() == MeshLodMap.find(meshInfo.LODLevel))
+		{
+			MeshLodMap.insert(std::make_pair(meshInfo.LODLevel, FbxMeshSet()));
+		}
+
+		FbxMeshSet& DrawMesh = MeshLodMap[meshInfo.LODLevel];
+
+		if (DrawMesh.MapWI.end() == DrawMesh.MapWI.find(pMesh))
+		{
+			DrawMesh.MapWI.insert(std::make_pair(pMesh, std::map<int, std::vector<FbxExIW>>()));
+		}
+
+		DrawMesh.IsLod = meshInfo.bIsLodGroup;
+		DrawMesh.IsLodLv = meshInfo.LODLevel;
+		DrawMesh.Vertexs.push_back(std::vector<GameEngineVertex>());
+		DrawMesh.Indexs.push_back(std::vector<std::vector<UINT>>());
+		std::vector<GameEngineVertex>& VtxData = DrawMesh.Vertexs[DrawMesh.Vertexs.size() - 1];
+		std::vector<std::vector<UINT>>& IdxData = DrawMesh.Indexs[DrawMesh.Indexs.size() - 1];
+
+		int controlPointsCount = pMesh->GetControlPointsCount();
+
+		// 이게 fbx안에 담겨있는 포지션 데이터
+		fbxsdk::FbxVector4* pControlPoints = pMesh->GetControlPoints();
+
+		VtxData.resize(controlPointsCount);
+
+		fbxsdk::FbxAMatrix meshMatrix = ConvertMatrix;
+
+		meshMatrix = ComputeTotalMatrix(pMeshNode);
+
+		if (false == meshInfo.bIsSkelMesh)
+		{
+			meshMatrix = JointConvertMatrix * meshMatrix;
+		}
+
+		// 크기가 -인게 있는지 확인
+		bool isOddNegativeScale = IsOddNegativeScale(meshMatrix);
+
+		// 포지션을 얻어온다.
+		for (int controlPointIndex = 0; controlPointIndex < controlPointsCount; ++controlPointIndex)
+		{
+			fbxsdk::FbxVector4 controlPoint = pControlPoints[controlPointIndex];
+			// VtxData[controlPointIndex].Pos *= 2.0F;
+			fbxsdk::FbxVector4 calculateControlPoint = meshMatrix.MultT(controlPoint);
+			VtxData[controlPointIndex].POSITION = FbxVecToTransform(calculateControlPoint);
+			VtxData[controlPointIndex].POSITION.w = 1.0f;
+		}
+
+		//RenderSetMaterialSetting(pMeshNode, pDrawSet);
+
+		fbxsdk::FbxStringList UVSetNameList;
+		pMesh->GetUVSetNames(UVSetNameList);
+		int uvSetCount = UVSetNameList.GetCount();
+		for (int uvSetIndex = 0; uvSetIndex < uvSetCount; ++uvSetIndex)
+		{
+			const char* uvSetName = UVSetNameList.GetStringAt(uvSetIndex);
+			const fbxsdk::FbxGeometryElementUV* pUVElement = pMesh->GetElementUV(uvSetName);
+			if (nullptr == pUVElement)
+			{
+				continue;
+			}
+
+			fbxsdk::FbxGeometryElement::EMappingMode eMappingMode = pUVElement->GetMappingMode();
+			fbxsdk::FbxGeometryElement::EReferenceMode eReferenceMode = pUVElement->GetReferenceMode();
+			bool useIndex = fbxsdk::FbxGeometryElement::EReferenceMode::eDirect != eReferenceMode;
+			int IndexCount = true == useIndex ? pUVElement->GetIndexArray().GetCount() : 0;
+
+			int nPolygonCount = pMesh->GetPolygonCount();
+			for (int PolygonIndex = 0; PolygonIndex < nPolygonCount; ++PolygonIndex)
+			{
+				const int PolygonSize = pMesh->GetPolygonSize(PolygonIndex);
+				if (3 != PolygonSize)
+				{
+					GameEngineDebug::MsgBoxError("삼각형이 아닌 면이 발견됬습니다.");
+				}
+
+				for (int PositionInPolygon = 0; PositionInPolygon < PolygonSize; ++PositionInPolygon)
+				{
+					int convertUvIndex = isOddNegativeScale ? 2 - PositionInPolygon : PositionInPolygon;
+					int ControlPointIndex = pMesh->GetPolygonVertex(PolygonIndex, PositionInPolygon);
+					int UVMapIndex = (fbxsdk::FbxGeometryElement::EMappingMode::eByControlPoint == eMappingMode) ?
+						ControlPointIndex : PolygonIndex * 3 + PositionInPolygon;
+
+					int UvIndex = useIndex ? pUVElement->GetIndexArray().GetAt(UVMapIndex) : UVMapIndex;
+					fbxsdk::FbxVector2 uvValue = pUVElement->GetDirectArray().GetAt(UvIndex);
+
+					VtxData[ControlPointIndex].TEXTURECOORD.x = static_cast<float>(uvValue.mData[0]);
+					VtxData[ControlPointIndex].TEXTURECOORD.y = 1.f - static_cast<float>(uvValue.mData[1]);
+				}
+			}
+		}
+
+		pMesh->GetElementMaterialCount();
+		fbxsdk::FbxGeometryElementMaterial* pGeometryElementMaterial = pMesh->GetElementMaterial();
+		fbxsdk::FbxGeometryElementNormal* pGeometryElementNormal = pMesh->GetElementNormal();
+
+		// pMeshNode->GetMaterialIndex()
+		int materialCount = pMeshNode->GetMaterialCount();
+		IdxData.resize(materialCount);
+
+		UINT VtxId = 0;
+
+		int nPolygonCount = pMesh->GetPolygonCount();
+		for (int PolygonIndex = 0; PolygonIndex < nPolygonCount; ++PolygonIndex)
+		{
+			int PolygonSize = pMesh->GetPolygonSize(PolygonIndex);
+			if (3 != PolygonSize)
+			{
+				GameEngineDebug::MsgBoxError("삼각형이 아닌 면이 발견됬습니다.");
+			}
+
+			int IndexArray[3] = { 0, };
+			for (int PositionInPolygon = 0; PositionInPolygon < PolygonSize; ++PositionInPolygon)
+			{
+				int ControlPointIndex = pMesh->GetPolygonVertex(PolygonIndex, PositionInPolygon);
+				IndexArray[PositionInPolygon] = ControlPointIndex;
+
+				LoadNormal(pMesh, meshMatrix, VtxData, VtxId, ControlPointIndex);
+				LoadTangent(pMesh, meshMatrix, VtxData, VtxId, ControlPointIndex);
+				LoadBinormal(pMesh, meshMatrix, VtxData, VtxId, ControlPointIndex);
+
+				++VtxId;
+			}
+
+			int materialId = pGeometryElementMaterial->GetIndexArray().GetAt(PolygonIndex);
+			IdxData[materialId].push_back(IndexArray[0]);
+			IdxData[materialId].push_back(IndexArray[2]);
+			IdxData[materialId].push_back(IndexArray[1]);
+		}
+
+		//pDrawSet->m_FbxVtxMap.insert(std::make_pair(pMesh, &VtxData));
+	}
+
+}
+
+void GameEngineFBXMesh::CreateRenderingBuffer()
+{
+	CreateVertexBuffer();
+	CreateIndexBuffer();
+}
+
+void GameEngineFBXMesh::CreateVertexBuffer()
+{
+	for (auto& Data : MeshLodMap)
+	{
+		for (size_t i = 0; i < Data.second.Vertexs.size(); i++)
+		{
+			GameEngineVertexBuffer* NewRes = new GameEngineVertexBuffer();
+			NewRes->Create(Data.second.Vertexs[i], D3D11_USAGE::D3D11_USAGE_DEFAULT);
+			Data.second.GameEngineVertexBuffers.push_back(NewRes);
+		}
+	}
+}
+
+void GameEngineFBXMesh::CreateIndexBuffer()
+{
+	for (auto& Data : MeshLodMap)
+	{
+		for (size_t i = 0; i < Data.second.Indexs.size(); i++)
+		{
+			Data.second.GameEngineIndexBuffers.push_back(std::vector<GameEngineIndexBuffer*>());
+			for (size_t j = 0; j < Data.second.Indexs[i].size(); j++)
+			{
+				GameEngineIndexBuffer* NewRes = new GameEngineIndexBuffer();
+				NewRes->Create(Data.second.Indexs[i][j], D3D11_USAGE::D3D11_USAGE_DEFAULT);
+				Data.second.GameEngineIndexBuffers[i].push_back(NewRes);
+			}
+		}
+
+	}
 }

@@ -39,7 +39,9 @@ void GameEngineFBXWindow::OnGUI()
         SelectMesh = GameEngineFBXMeshManager::GetInst().Find(Arr[Select]);
     }
 
-    ImGui::BeginChildFrame(reinterpret_cast<ImGuiID>("##NODETREERANGE"), { (Scroll * 3) + 300 , 500 }/*, ImGuiWindowFlags_HorizontalScrollbar*/);
+    ImGui::BeginChildFrame(static_cast<ImGuiID>(
+        reinterpret_cast<uint64_t>("##NODETREERANGE"))
+        , { (Scroll * 3) + 300 , 500 }/*, ImGuiWindowFlags_HorizontalScrollbar*/);
 
     if (nullptr != SelectMesh)
     {
@@ -155,7 +157,8 @@ void GameEngineFBXWindow::OnGUI()
     {
         if (ImGui::Button("MeshLoad"))
         {
-            SelectMesh->MeshNodeCheck();
+            SelectMesh->MeshLoad();
+            SelectMesh->CreateRenderingBuffer();
         }
     }
 

@@ -32,4 +32,6 @@ public:
 	float4 NORMAL;
 	float4 TANGENT;
 	float4 BINORMAL;
+	float4 Weight;
+	int Index[4];
 };
