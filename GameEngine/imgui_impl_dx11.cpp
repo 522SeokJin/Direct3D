@@ -334,7 +334,7 @@ static void ImGui_ImplDX11_CreateFontsTexture()
         desc.CPUAccessFlags = 0;
 
         ID3D11Texture2D* pTexture = NULL;
-        D3D11_SUBRESOURCE_DATA subResource;
+        D3D11_SUBRESOURCE_DATA subResource = D3D11_SUBRESOURCE_DATA{ 0 };
         subResource.pSysMem = pixels;
         subResource.SysMemPitch = desc.Width * 4;
         subResource.SysMemSlicePitch = 0;
