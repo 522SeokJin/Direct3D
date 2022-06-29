@@ -7,9 +7,6 @@
     <Filter Include="RenderingPipeLine">
       <UniqueIdentifier>{eb13eb89-be63-4e00-a889-728dc0e3dfd5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="RenderingPipeLine\Shader">
-      <UniqueIdentifier>{a346d989-05ec-46ed-900b-34eef56810a7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resources">
       <UniqueIdentifier>{fa4b97cb-7bcf-4645-830a-6809cdcc5515}</UniqueIdentifier>
     </Filter>

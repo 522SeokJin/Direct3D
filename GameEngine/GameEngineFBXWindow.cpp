@@ -190,9 +190,9 @@ void GameEngineFBXWindow::OnGUI()
                             GameEngineRenderer* Renderer = NewActor->CreateTransformComponent<GameEngineRenderer>(NewActor->GetTransform());
                             Renderer->SetRenderingPipeLine("Color");
                             Renderer->SetMesh(VertexBuffer, IndexBuffer);
-                            Renderer->GetTransform()->SetLocalScaling({ 10.0f, 10.0f, 10.0f });
+                            //Renderer->GetTransform()->SetLocalScaling({ 10.0f, 10.0f, 10.0f });
                             Renderer->GetTransform()->SetLocalPosition({ 0.0f, 0.0f, 0.0f });
-                            Renderer->ShaderHelper.SettingConstantBufferSet("ResultColor", float4(1.0f, 0.0f, 0.0f));
+                            Renderer->ShaderHelper.SettingConstantBufferSet("ResultColor", float4(0.8f, 0.8f, 0.8f));
                         }
                     }
                 }

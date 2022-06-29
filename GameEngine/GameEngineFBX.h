@@ -1,7 +1,10 @@
 #pragma once
 #include <GameEngineBase/GameEngineObjectNameBase.h>
 
+#pragma warning( push )
+#pragma warning ( disable : 26495 )
 #include <fbxsdk.h>
+#pragma warning( pop )
 
 // 디버그 모드일때.
 //#pragma comment(lib, "zlib-mt.lib")

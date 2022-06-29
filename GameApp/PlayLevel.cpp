@@ -132,13 +132,14 @@ void PlayLevel::CreateActorLevel()
 		Actor->GetLight()->SetSpacularLightPow(50.0f);
 
 		Actor = CreateActor<LightActor>();
-		Actor->GetLight()->SetDiffusePower(0.3f);
+		Actor->GetLight()->SetDiffusePower(0.9f);
 		Actor->GetLight()->SetSpacularLightPow(50.0f);
 		Actor->GetTransform()->SetLocalRotationDegree({ 45.0f, 0.0f, 0.0f });
 	}
 
 	{
 		Player* Actor = CreateActor<Player>();
+		Actor->GetTransform()->SetWorldPosition({0.0f, 200.0f, -500.0f});
 	}
 
 	{
